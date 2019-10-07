@@ -1,3 +1,5 @@
+import os
+
 import numpy as np
 import sys
 import skimage
@@ -5,18 +7,18 @@ from skimage import io
 from skimage.exposure import histogram
 from skimage.feature import local_binary_pattern
 
+from Main import config
+
 np.set_printoptions(threshold=sys.maxsize)
 np.set_printoptions(suppress=True)
 
 
 class LBP:
-    def __init__(self, fileName):
-        self.fileName = fileName
 
-    def calculateFeatureDiscriptor(self):
+    def LBPForSingleImage(self,fileName):
         block_r = 100
         block_c = 100
-        imageInput = io.imread(self.fileName)
+        imageInput = io.imread(fileName)
         imageInput = skimage.color.rgb2gray(imageInput)
         n_points = 8
         radius = 1
@@ -30,5 +32,16 @@ class LBP:
                 lbphist.append(output[0])
         lbphist = np.array(lbphist)
         lbphist = lbphist.flatten()
-        print(lbphist)
         return lbphist
+
+    @classmethod
+    def LBPFeatureDescriptor(self):
+        # Iterating on all the images in the selected folder to calculate HOG FD for each of the images
+        storeLbpFD = []
+        lbp = LBP();
+        for file in os.listdir(str(config.IMAGE_FOLDER)):
+            filename = os.fsdecode(file)
+            if filename.endswith(".jpg"):
+                hognp = lbp.LBPForSingleImage(str(config.IMAGE_FOLDER) + "\\" + filename)
+                storeLbpFD.append(hognp.tolist())
+        return storeLbpFD
