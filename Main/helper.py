@@ -1,11 +1,12 @@
 from Main.featureDescriptors.CM import CM
 from Main.featureDescriptors.HOG import HOG
 from Main.featureDescriptors.LBP import LBP
+import numpy as np
+
+from Main.reducers.PCA_Reducer import PCA_Reducer
 
 
 def getUserInput():
-    print("Please select the image path")
-    userInput = input()
     print("Please select the feature descriptor technique")
     print("1. Color Moments")
     print("2. Linear Binary Patterns")
@@ -13,36 +14,11 @@ def getUserInput():
     print("4. SIFT")
     fdInput = input()
     print("Please select the feature reduction technique")
-    print("1. PDA")
+    print("1. PCA")
     print("2. LDA")
     print("3. SVD")
     print("4. NMF")
     frInput = input()
-    return [userInput, fdInput, frInput]
-
-
-def processFeatureDescriptors():
-    inputs = getUserInput()
-    imagePath = inputs[0]
-    fdTechnique = inputs[1]
-    frTechnique = inputs[2]
-
-    featureVector = []
-
-    if int(fdTechnique) == 1:
-        cm = CM(imagePath)
-        featureVector = cm.calculateFeatureDescriptor()
-        return featureVector
-    elif int(fdTechnique) == 2:
-        lbp = LBP(imagePath)
-        featureVector = lbp.calculateFeatureDiscriptor()
-        return featureVector
-    elif int(fdTechnique) == 3:
-        hog = HOG(imagePath)
-        featureVector = hog.calculateFeatureDiscriptor()
-        return featureVector
-    elif int(fdTechnique) == 4:
-        pass
-    else:
-        print("Wrong input")
-        exit()
+    print("Please enter K number of latent semantics")
+    k = input()
+    return [fdInput, frInput, k]
