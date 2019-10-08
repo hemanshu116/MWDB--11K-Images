@@ -8,6 +8,7 @@ from skimage.exposure import histogram
 from skimage.feature import local_binary_pattern
 
 from Main import config
+from Main.helper import progress
 
 np.set_printoptions(threshold=sys.maxsize)
 np.set_printoptions(suppress=True)
@@ -39,9 +40,15 @@ class LBP:
         # Iterating on all the images in the selected folder to calculate HOG FD for each of the images
         storeLbpFD = []
         lbp = LBP();
+        files = os.listdir(str(config.IMAGE_FOLDER))  # dir is your directory path
+        number_files = len(files)
+        i = 0;
         for file in os.listdir(str(config.IMAGE_FOLDER)):
             filename = os.fsdecode(file)
             if filename.endswith(".jpg"):
                 hognp = lbp.LBPForSingleImage(str(config.IMAGE_FOLDER) + "\\" + filename)
                 storeLbpFD.append(hognp.tolist())
+                i = i + 1
+                progress(i, number_files)
+        print()
         return storeLbpFD

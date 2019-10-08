@@ -6,6 +6,7 @@ import numpy as np
 
 # a method that partitions a input image into 100 * 100 windows
 from Main import config
+from Main.helper import progress
 
 
 def get_100_by_100_windows(input_image):
@@ -64,12 +65,15 @@ class CM:
         # Iterating on all the images in the selected folder to calculate HOG FD for each of the images
         storeCmFD = []
         cm = CM();
-        count = 0;
+        files = os.listdir(str(config.IMAGE_FOLDER))  # dir is your directory path
+        number_files = len(files)
+        i = 0;
         for file in os.listdir(str(config.IMAGE_FOLDER)):
             filename = os.fsdecode(file)
             if filename.endswith(".jpg"):
                 hognp = cm.CMForSingleImage(str(config.IMAGE_FOLDER) + "\\" + filename)
                 storeCmFD.append(hognp.tolist())
-                count = count + 1;
-                print(count)
+                i = i + 1
+                progress(i, number_files)
+        print()
         return storeCmFD

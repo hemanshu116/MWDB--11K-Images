@@ -5,6 +5,7 @@ from skimage.feature import hog
 from skimage.transform import rescale
 
 import Main.config as config
+from Main.helper import progress
 
 
 class HOG:
@@ -26,9 +27,15 @@ class HOG:
         # Iterating on all the images in the selected folder to calculate HOG FD for each of the images
         storeHogFD = []
         hog = HOG();
+        files = os.listdir(str(config.IMAGE_FOLDER))  # dir is your directory path
+        number_files = len(files)
+        i = 0;
         for file in os.listdir(str(config.IMAGE_FOLDER)):
             filename = os.fsdecode(file)
             if filename.endswith(".jpg"):
+                i = i + 1
                 hognp = hog.HOGForSingleImage(str(config.IMAGE_FOLDER) + "\\" + filename)
+                progress(i, number_files)
                 storeHogFD.append(hognp.tolist())
+        print()
         return storeHogFD
