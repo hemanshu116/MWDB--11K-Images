@@ -12,3 +12,4 @@ class LDA_Reducer:
         clf.fit_transform(self.featureDescriptor)
         principalDf = pd.DataFrame(data=clf)
         print(principalDf)
+        return principalDf

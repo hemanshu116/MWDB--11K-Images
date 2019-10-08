@@ -13,4 +13,4 @@ class PCA_Reducer:
         principalComponents = pca.fit_transform(self.featureDescriptor)
         # print(principalComponents)
         principalDf = pd.DataFrame(data=principalComponents)
-        print(principalDf)
+        return principalDf
