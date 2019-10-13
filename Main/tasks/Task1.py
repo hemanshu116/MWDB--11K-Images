@@ -26,7 +26,9 @@ def saveToFile(fr, frType, fdType):
 
     fr.rename(index=store, inplace=True)
     # print(json.loads(fr.to_json()))
-    with open('../../Database/' + frTechniqueDict[frType] + '_' + fdTechniqueDict[fdType] + '.json', 'w',
+    # print('Current path is: ', os.path.abspath())
+    # print('Path of DB: ', )
+    with open(config.DATABASE_FOLDER + '\\' + frTechniqueDict[frType] + '_' + fdTechniqueDict[fdType] + '.json', 'w',
               encoding='utf-8') as f:
         json.dump(json.loads(fr.to_json(orient='index')), f, ensure_ascii=True, indent=4)
 

@@ -1,3 +1,11 @@
+"""
+TO-DO:
+1. SIFT needs to be fixed.
+2. LDA needs to be implemented.
+3. SVD needs to be implemented.
+4. NMF needs to be implemented.
+"""
+
 from Main.tasks.Task1 import startTask1
 from Main.tasks.Task2 import startTask2
 from Main.tasks.Task3 import startTask3
