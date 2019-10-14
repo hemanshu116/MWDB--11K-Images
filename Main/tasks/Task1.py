@@ -61,6 +61,7 @@ def startTask1(inputs=[], shouldGetInputs=True):
         exit()
     k = int(k)
     fr = ""
+    print(len(featureVector))
     if int(frTechnique) == 1:
         featureVector = normalize(featureVector, axis=1, norm='l2')
         fr = PCA_Reducer(featureVector, k).reduceDimension()

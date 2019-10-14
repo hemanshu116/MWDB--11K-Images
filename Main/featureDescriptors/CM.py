@@ -77,3 +77,21 @@ class CM:
                 progress(i, number_files)
         print()
         return storeCmFD
+
+    @classmethod
+    def CMFeatureDescriptorForImageSubset(self, imageSet):
+        # Iterating on all the images in the selected folder to calculate HOG FD for each of the images in the subset
+        storeCmFD = []
+        cm = CM();
+        files = os.listdir(str(config.IMAGE_FOLDER))  # dir is your directory path
+        number_files = len(files)
+        i = 0;
+        for file in os.listdir(str(config.IMAGE_FOLDER)):
+            filename = os.fsdecode(file)
+            if filename.endswith(".jpg") and (filename in imageSet.imageName.values):
+                hognp = cm.CMForSingleImage(str(config.IMAGE_FOLDER) + "\\" + filename)
+                storeCmFD.append(hognp.tolist())
+                i = i + 1
+                progress(i, number_files)
+        print(len(storeCmFD))
+        return storeCmFD

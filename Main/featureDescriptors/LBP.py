@@ -52,3 +52,21 @@ class LBP:
                 progress(i, number_files)
         print()
         return storeLbpFD
+
+    @classmethod
+    def LBPFeatureDescriptorForImageSubset(self, imageSet):
+        # Iterating on all the images in the selected folder to calculate HOG FD for each of the images
+        storeLbpFD = []
+        lbp = LBP();
+        files = os.listdir(str(config.IMAGE_FOLDER))  # dir is your directory path
+        number_files = len(files)
+        i = 0;
+        for file in os.listdir(str(config.IMAGE_FOLDER)):
+            filename = os.fsdecode(file)
+            if filename.endswith(".jpg") and (filename in imageSet.imageName.values):
+                hognp = lbp.LBPForSingleImage(str(config.IMAGE_FOLDER) + "\\" + filename)
+                storeLbpFD.append(hognp.tolist())
+                i = i + 1
+                progress(i, number_files)
+        print()
+        return storeLbpFD
