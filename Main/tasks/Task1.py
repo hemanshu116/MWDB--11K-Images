@@ -4,6 +4,8 @@ import os
 import pandas as pd
 import numpy as np
 
+from sklearn.preprocessing import normalize
+
 import Main.config as config
 from Main.config import frTechniqueDict, fdTechniqueDict
 from Main.featureDescriptors.CM import CM
@@ -26,7 +28,7 @@ def saveToFile(fr, frType, fdType):
 
     fr.rename(index=store, inplace=True)
     # print(json.loads(fr.to_json()))
-    with open('../../Database/' + frTechniqueDict[frType] + '_' + fdTechniqueDict[fdType] + '.json', 'w',
+    with open(config.DATABASE_FOLDER + frTechniqueDict[frType] + '_' + fdTechniqueDict[fdType] + '.json', 'w',
               encoding='utf-8') as f:
         json.dump(json.loads(fr.to_json(orient='index')), f, ensure_ascii=True, indent=4)
 
@@ -59,7 +61,9 @@ def startTask1(inputs=[], shouldGetInputs=True):
         exit()
     k = int(k)
     fr = ""
+    print(len(featureVector))
     if int(frTechnique) == 1:
+        featureVector = normalize(featureVector, axis=1, norm='l2')
         fr = PCA_Reducer(featureVector, k).reduceDimension()
     if int(frTechnique) == 2:
         fr = LDA_Reducer(featureVector, k).reduceDimension()
@@ -90,4 +94,4 @@ def getUserInputForTask1():
 
 
 # Uncomment to run task independently
-# startTask1()
+startTask1()
