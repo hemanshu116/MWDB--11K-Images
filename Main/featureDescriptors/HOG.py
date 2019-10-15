@@ -39,3 +39,21 @@ class HOG:
                 storeHogFD.append(hognp.tolist())
         print()
         return storeHogFD
+
+    @classmethod
+    def HOGFeatureDescriptorForImageSubset(self, imageSet):
+        # Iterating on all the images in the selected folder to calculate HOG FD for each of the images in the subset
+        storeHogFD = []
+        hog = HOG();
+        files = os.listdir(str(config.IMAGE_FOLDER))  # dir is your directory path
+        number_files = len(files)
+        i = 0;
+        for file in os.listdir(str(config.IMAGE_FOLDER)):
+            filename = os.fsdecode(file)
+            if filename.endswith(".jpg") and (filename in imageSet.imageName.values):
+                i = i + 1
+                hognp = hog.HOGForSingleImage(str(config.IMAGE_FOLDER) + "\\" + filename)
+                progress(i, number_files)
+                storeHogFD.append(hognp.tolist())
+        print()
+        return storeHogFD

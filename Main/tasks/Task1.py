@@ -4,6 +4,8 @@ import os
 import pandas as pd
 import numpy as np
 
+from sklearn.preprocessing import normalize
+
 import Main.config as config
 from Main.config import frTechniqueDict, fdTechniqueDict
 from Main.featureDescriptors.CM import CM
@@ -61,7 +63,9 @@ def startTask1(inputs=[], shouldGetInputs=True):
         exit()
     k = int(k)
     fr = ""
+    print(len(featureVector))
     if int(frTechnique) == 1:
+        featureVector = normalize(featureVector, axis=1, norm='l2')
         fr = PCA_Reducer(featureVector, k).reduceDimension()
     if int(frTechnique) == 2:
         fr = LDA_Reducer(featureVector, k).reduceDimension()
