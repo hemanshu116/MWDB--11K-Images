@@ -16,6 +16,7 @@ from Main.tasks.Task7 import startTask7
 from Main.tasks.Task8 import startTask8
 
 runAgain = True
+print('Run again?', runAgain)
 
 while runAgain:
     print("Select one of the below")
@@ -46,4 +47,4 @@ while runAgain:
     elif int(userInput) == 8:
         startTask8()
     else:
-        runAgain = False;
+        runAgain = False

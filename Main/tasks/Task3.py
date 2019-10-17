@@ -38,6 +38,7 @@ def startTask3(inputs=[], shouldGetInputs=True):
     flTechnique = inputs[1]
     frTechnique = inputs[2]
     k = int(inputs[3])
+
     meta_data = pd.read_csv(config.METADATA_FOLDER)
     if flTechnique == '1':
         aspectOfHand = 'dorsal'

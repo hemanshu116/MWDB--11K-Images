@@ -11,6 +11,7 @@ from Main.config import frTechniqueDict, fdTechniqueDict
 from Main.featureDescriptors.CM import CM
 from Main.featureDescriptors.HOG import HOG
 from Main.featureDescriptors.LBP import LBP
+from Main.featureDescriptors.SIFT import SIFT
 from Main.reducers.LDA_Reducer import LDA_Reducer
 from Main.reducers.NMF_Reducer import NMF_Reducer
 from Main.reducers.PCA_Reducer import PCA_Reducer
@@ -57,13 +58,14 @@ def startTask1(inputs=[], shouldGetInputs=True):
         featureVector = hog.HOGFeatureDescriptor()
         # return featureVector
     elif int(fdTechnique) == 4:
-        pass
+        sift = SIFT()
+        featureVector = sift.SIFTFeatureDescriptor()
     else:
         print("Wrong input")
         exit()
     k = int(k)
     fr = ""
-    print(len(featureVector))
+    print('length of feature vector', len(featureVector))
     if int(frTechnique) == 1:
         featureVector = normalize(featureVector, axis=1, norm='l2')
         fr = PCA_Reducer(featureVector, k).reduceDimension()
