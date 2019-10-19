@@ -44,7 +44,7 @@ class HOG:
     def HOGFeatureDescriptorForImageSubset(self, imageSet):
         # Iterating on all the images in the selected folder to calculate HOG FD for each of the images in the subset
         storeHogFD = []
-        hog = HOG();
+        hog = HOG()
         files = os.listdir(str(config.IMAGE_FOLDER))  # dir is your directory path
         number_files = len(files)
         i = 0;

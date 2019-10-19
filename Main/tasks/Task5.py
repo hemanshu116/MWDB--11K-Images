@@ -24,16 +24,15 @@ def startTask5():
     label_ch = inps['label']
     k = inps['k']
 
-    # Fetch the latent semantic corresponding to the feat desc, redux teknik, label and k val
-    latent_semantics = get_latent_semantics(int(feat_desc_ch), int(feat_redux_ch), int(label_ch), int(k))
-    # Pretty print the latent semantic returned
-    # with pd.option_context('display.max_rows', None, 'display.max_columns', None):
-    #     print(latent_semantics)
-    print('Shape of latent sem: ', np.shape(latent_semantics), 'type: ', type(latent_semantics))
+    # Fetch feature vector and latent semantic corresponding to the feat desc, redux teknik, label and k val
+    feature_vec, latent_semantics = get_latent_semantics(int(feat_desc_ch), int(feat_redux_ch), int(label_ch), int(k))
 
-    # Transform matrix
+
+    # Project sample imgs into the latent space
+    img_latent_features = np.dot(feature_vec, np.transpose(latent_semantics))   # Will this work for all feat desc?
 
     # Inverse Transform matrix
+    feature_vec_reconstructed =
 
     # Calc diff b/w I and I'
 
@@ -63,30 +62,46 @@ def get_usr_input():
 
 
 def get_latent_semantics(feat_desc_ch, feat_redux_ch, label_ch, k):
-    meta_data = pd.read_csv(config.METADATA_FOLDER)  # Opens csv to dataframe
-
     # Get subset of imgs corresponding to the label
-    aspect_of_hand = get_aspect_of_hand(label_ch)
-    img_subset = meta_data.loc[meta_data['aspectOfHand'].str.contains(aspect_of_hand)]
+    img_subset = get_label_match_imgs(label_ch)
+    print('Img Subset: ', np.shape(img_subset), type(img_subset))
+    print(img_subset.head())
 
     # Create feature descriptor for the img subset
     feat_vec = get_feature_vector(feat_desc_ch, img_subset)
+    print('Feature vector: ', np.shape(feat_vec), type(feat_vec))
 
     # Apply dimensionality reduction
     latent_sem = create_latent_semantics(feat_redux_ch, feat_vec, k)
+    # Pretty print the latent semantic returned
+    # with pd.option_context('display.max_rows', None, 'display.max_columns', None):
+    #     print(latent_semantics)
+    print('Shape of latent sem: ', np.shape(latent_sem), 'type: ', type(latent_sem))
+    print(latent_sem.tail(), latent_sem.head())
 
-    return latent_sem
+    return feat_vec, latent_sem
 
 
-def get_aspect_of_hand(label_ch):
-    if (int(label_ch) == 1): return 'left'
-    elif (int(label_ch) == 2): return 'right'
-    elif (int(label_ch) == 3): return 'dorsal'
-    elif (int(label_ch) == 4): return 'palmar'
-    elif (int(label_ch) == 5): return '1'
-    elif (int(label_ch) == 6): return '2'
-    elif (int(label_ch) == 7): return 'male'
-    elif (int(label_ch) == 8): return 'female'
+def get_label_match_imgs(label_ch):
+    meta_data = pd.read_csv(config.METADATA_FOLDER)  # Opens csv to dataframe
+
+
+    if (int(label_ch) == 1):
+        return meta_data.loc[meta_data['aspectOfHand'].str.contains('left')]
+    elif (int(label_ch) == 2):
+        return meta_data.loc[meta_data['aspectOfHand'].str.contains('right')]
+    elif (int(label_ch) == 3):
+        return meta_data.loc[meta_data['aspectOfHand'].str.contains('dorsal')]
+    elif (int(label_ch) == 4):
+        return meta_data.loc[meta_data['aspectOfHand'].str.contains('palmar')]
+    elif (int(label_ch) == 5):
+        return meta_data.loc[meta_data['accessories'].str.contains('1')]
+    elif (int(label_ch) == 6):
+        return meta_data.loc[meta_data['accessories'].str.contains('0')]
+    elif (int(label_ch) == 7):
+        return meta_data.loc[meta_data['gender'].str.contains('male')]
+    elif (int(label_ch) == 8):
+        return meta_data.loc[meta_data['gender'].str.contains('female')]
 
 
 def get_feature_vector(feat_desc_ch, img_subset):
@@ -104,13 +119,13 @@ def get_feature_vector(feat_desc_ch, img_subset):
         return sift.SIFTFeatureDescriptorForImageSubset(img_subset)
 
 
-def create_latent_semantics(feature_redux_teknik_ch, feature_vector, k):
-    if (feature_redux_teknik_ch == 1):
+def create_latent_semantics(feature_redux_ch, feature_vector, k):
+    if (feature_redux_ch == 1):
         return PCA_Reducer(feature_vector, k).reduceDimension()
-    elif (feature_redux_teknik_ch == 2):
+    elif (feature_redux_ch == 2):
         return LDA_Reducer(feature_vector, k).reduceDimension()
-    elif (feature_redux_teknik_ch == 3):
+    elif (feature_redux_ch == 3):
         return SVD_Reducer(feature_vector, k).reduceDimension()
-    elif (feature_redux_teknik_ch == 4):
+    elif (feature_redux_ch == 4):
         return NMF_Reducer(feature_vector, k).reduceDimension()
 
