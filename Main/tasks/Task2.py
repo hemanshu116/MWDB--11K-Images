@@ -1,7 +1,9 @@
 import json
 import os
+import pickle
 
 import numpy as np
+import pandas as pd
 
 from Main import config
 from Main.config import DATABASE_FOLDER, frTechniqueDict, fdTechniqueDict
@@ -15,13 +17,16 @@ def startTask2():
     frTechnique = inputTask2[1]
     imageId = inputTask2[2]
     m = inputTask2[3]
-    with open('../../Database/' + frTechniqueDict[fdTechnique] + '_' + fdTechniqueDict[frTechnique] + '.json',
-              "r") as f:
-        data = json.load(f)
+    with open(config.DATABASE_FOLDER + frTechniqueDict[fdTechnique] + '_' + fdTechniqueDict[frTechnique], "rb") as f:
+        reducerObject = pickle.load(f)
     latentFeatureDict = {}
-    for key, value in data.items():
-        latent = data[key]
-        latentFeatureDict[key] = np.asarray(list(latent.values()))
+    data = reducerObject.reduceDimension(reducerObject.featureDescriptor)
+    i=0
+    for file in os.listdir(str(config.IMAGE_FOLDER)):
+        filename = os.fsdecode(file)
+        latent = data.iloc[i][:]
+        latentFeatureDict[filename] = latent
+        i=i+1
 
     selectedImage = latentFeatureDict[imageId]
     distanceList = findDistance(selectedImage, latentFeatureDict)
@@ -52,8 +57,7 @@ def getUserInputForTask2():
     print("3. SVD")
     print("4. NMF")
     frInput = input()
-    fileExists = os.path.exists(
-        DATABASE_FOLDER + "\\" + frTechniqueDict.get(fdInput) + "_" + fdTechniqueDict.get(frInput) + ".json")
+    fileExists = os.path.exists(DATABASE_FOLDER + "\\" + frTechniqueDict.get(fdInput) + "_" + fdTechniqueDict.get(frInput))
     if fileExists:
         print("Database found, still want to recompute? (Y/N)")
         shouldRecompute = input()
@@ -73,4 +77,4 @@ def getUserInputForTask2():
     return [fdInput, frInput, imagePath, int(m)]
 
 # Uncomment to run task independently
-# startTask2()
+startTask2()

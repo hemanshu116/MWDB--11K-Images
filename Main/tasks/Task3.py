@@ -2,6 +2,7 @@ import json
 import os
 
 import pandas as pd
+import pickle
 from sklearn.preprocessing import normalize
 
 import Main.config as config
@@ -13,7 +14,6 @@ from Main.reducers.LDA_Reducer import LDA_Reducer
 from Main.reducers.NMF_Reducer import NMF_Reducer
 from Main.reducers.PCA_Reducer import PCA_Reducer
 from Main.reducers.SVD_Reducer import SVD_Reducer
-
 
 def saveToFile(fr, frType, fdType, flabel, k):
     store = {}
@@ -79,15 +79,15 @@ def startTask3(inputs=[], shouldGetInputs=True):
     # print('Image set: ', imageSet)
     if fdTechnique == "1":
         cm = CM()
-        featureVector = cm.CMFeatureDescriptorForImageSubset(imageSet)
+        featureVector, imageID = cm.CMFeatureDescriptorForImageSubset(imageSet)
 
     elif fdTechnique == "2":
         lbp = LBP()
-        featureVector = lbp.LBPFeatureDescriptorForImageSubset(imageSet)
+        featureVector, imageID = lbp.LBPFeatureDescriptorForImageSubset(imageSet)
 
     elif fdTechnique == "3":
         hog = HOG()
-        featureVector = hog.HOGFeatureDescriptorForImageSubset(imageSet)
+        featureVector, imageID = hog.HOGFeatureDescriptorForImageSubset(imageSet)
 
     elif fdTechnique == "4":
         pass
@@ -95,16 +95,20 @@ def startTask3(inputs=[], shouldGetInputs=True):
         print("Wrong input")
         exit()
 
-
     if frTechnique == "1":
-            fr = PCA_Reducer(featureVector, k).reduceDimension()
+        fr = PCA_Reducer(featureVector, k)
     if frTechnique == "2":
-        fr = LDA_Reducer(featureVector, k).reduceDimension()
+        fr = LDA_Reducer(featureVector, k)
     if frTechnique == "3":
-        fr = SVD_Reducer(featureVector, k).reduceDimension()
+        fr = SVD_Reducer(featureVector, k)
     if frTechnique == "4":
-        fr = NMF_Reducer(featureVector, k).reduceDimension()
-    saveToFile(fr, fdTechnique, frTechnique, flabel, str(k))
+        fr = NMF_Reducer(featureVector, k)
+
+    fr.saveImageID(imageID)
+    # save for visualization pending
+
+    filehandler = open(config.DATABASE_FOLDER + frTechniqueDict[fdTechnique] + '_' + fdTechniqueDict[frTechnique] + '_' + flabel + '_' + str(k), 'wb')
+    pickle.dump(fr, filehandler)
 
 
 def getUserInputForTask1():

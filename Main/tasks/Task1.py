@@ -1,9 +1,9 @@
 import json
 import os
-
+import pickle
 import pandas as pd
 import numpy as np
-
+import matplotlib.pyplot as plt
 from sklearn.preprocessing import normalize
 
 import Main.config as config
@@ -11,7 +11,6 @@ from Main.config import frTechniqueDict, fdTechniqueDict
 from Main.featureDescriptors.CM import CM
 from Main.featureDescriptors.HOG import HOG
 from Main.featureDescriptors.LBP import LBP
-from Main.featureDescriptors.SIFT import SIFT
 from Main.reducers.LDA_Reducer import LDA_Reducer
 from Main.reducers.NMF_Reducer import NMF_Reducer
 from Main.reducers.PCA_Reducer import PCA_Reducer
@@ -29,10 +28,8 @@ def saveToFile(fr, frType, fdType):
 
     fr.rename(index=store, inplace=True)
     # print(json.loads(fr.to_json()))
-    # print('Current path is: ', os.path.abspath())
-    # print('Path of DB: ', )
-    with open(config.DATABASE_FOLDER + '\\' + frTechniqueDict[frType] + '_' + fdTechniqueDict[fdType] + '.json', 'w',
-              encoding='utf-8') as f:
+    json_file = os.path.join(config.DATABASE_FOLDER, frTechniqueDict[frType] + '_' + fdTechniqueDict[fdType] + '.json')
+    with open( json_file, 'w', encoding='utf-8') as f:
         json.dump(json.loads(fr.to_json(orient='index')), f, ensure_ascii=True, indent=4)
 
 
@@ -58,8 +55,7 @@ def startTask1(inputs=[], shouldGetInputs=True):
         featureVector = hog.HOGFeatureDescriptor()
         # return featureVector
     elif int(fdTechnique) == 4:
-        sift = SIFT()
-        featureVector = sift.SIFTFeatureDescriptor()
+        pass
     else:
         print("Wrong input")
         exit()
@@ -69,20 +65,24 @@ def startTask1(inputs=[], shouldGetInputs=True):
     print('length of feature vector', len(featureVector))
 
     if int(frTechnique) == 1:
-        featureVector = normalize(featureVector, axis=1, norm='l2')
-        fr = PCA_Reducer(featureVector, k).reduceDimension()
+        fr = PCA_Reducer(featureVector, k)
     if int(frTechnique) == 2:
-        fr = LDA_Reducer(featureVector, k).reduceDimension()
+        fr = LDA_Reducer(featureVector, k)
     if int(frTechnique) == 3:
-        fr = SVD_Reducer(featureVector, k).reduceDimension()
+        fr = SVD_Reducer(featureVector, k)
     if int(frTechnique) == 4:
-        if int(fdTechnique) == 1:
-            print('Color Moments Feat vec:\n', featureVector)
-            # Color moments is returning flattened array of mean, std dev and skew. Won't this result in loss of info on changing this to a histogram?
-            # Also it is converting the img to yuv. so we can just return y channel without affecting any other tasks?
-        fr = NMF_Reducer(featureVector, k).reduceDimension()
+        fr = NMF_Reducer(featureVector, k)
 
-    saveToFile(fr, fdTechnique, frTechnique)
+    # save for visualization
+    store = []
+    for file in os.listdir(str(config.IMAGE_FOLDER)):
+        filename = os.fsdecode(file)
+        if filename.endswith(".jpg"):
+            store.append(filename)
+    # plot_term_weight_pairs(fr.objectLatentsSemantics, store)
+
+    filehandler = open(config.DATABASE_FOLDER + frTechniqueDict[fdTechnique] + '_' + fdTechniqueDict[frTechnique], 'wb')
+    pickle.dump(fr, filehandler)
 
 
 def getUserInputForTask1():
@@ -101,6 +101,21 @@ def getUserInputForTask1():
     print("Please enter K number of latent semantics")
     k = input()
     return [fdInput, frInput, k]
+
+
+def plot_term_weight_pairs(components, col_index):
+    components_df = pd.DataFrame(components)
+    print(components.shape)
+    components_df['index'] = col_index
+    components_df.set_index('index')
+    print(components)
+    output = {}
+    num_components = len(components_df.columns)
+    for i in range(0, num_components):
+        sorted_vals = components_df.iloc[:, i].sort_values(ascending=False)
+        output[i] = (list(zip(sorted_vals, sorted_vals.index)))
+    fp = open(config.DATABASE_FOLDER + 'test.json', 'w')
+    json.dump(output, fp)
 
 
 # Uncomment to run task independently
