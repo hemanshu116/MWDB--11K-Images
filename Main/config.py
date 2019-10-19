@@ -3,7 +3,7 @@
 
 # Image DB Location.
 # IMAGE_FOLDER = "D:\ASU Projects\CSE 551 - MWDB\MWDB--11K-Images\images"
-IMAGE_FOLDER = "E:\Personal Stuff\Projects\ASU\MWDB\Working_Area\CSE 515 Fall19 - Smaller Dataset"
+IMAGE_FOLDER = "E:\Personal Stuff\Projects\ASU\MWDB\Working_Area\Dataset2"
 
 # Location where feature descriptors/Latent semantics will be stored.
 DATABASE_FOLDER = "E:\Personal Stuff\Projects\ASU\MWDB\Working_Area\MWDB--11K-Images\Database"

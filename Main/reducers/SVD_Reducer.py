@@ -9,5 +9,5 @@ class SVD_Reducer:
 
     def reduceDimension(self):
         U, S, VT = np.linalg.svd(self.featureDescriptor, full_matrices=True)
-        principalDf = pd.DataFrame(data=U[:, :self.k])
+        principalDf = pd.DataFrame(data=VT)     # Converting matrix to dataframe.
         return principalDf

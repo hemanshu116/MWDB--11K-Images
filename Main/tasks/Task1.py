@@ -63,9 +63,11 @@ def startTask1(inputs=[], shouldGetInputs=True):
     else:
         print("Wrong input")
         exit()
+
     k = int(k)
     fr = ""
     print('length of feature vector', len(featureVector))
+
     if int(frTechnique) == 1:
         featureVector = normalize(featureVector, axis=1, norm='l2')
         fr = PCA_Reducer(featureVector, k).reduceDimension()
@@ -74,6 +76,10 @@ def startTask1(inputs=[], shouldGetInputs=True):
     if int(frTechnique) == 3:
         fr = SVD_Reducer(featureVector, k).reduceDimension()
     if int(frTechnique) == 4:
+        if int(fdTechnique) == 1:
+            print('Color Moments Feat vec:\n', featureVector)
+            # Color moments is returning flattened array of mean, std dev and skew. Won't this result in loss of info on changing this to a histogram?
+            # Also it is converting the img to yuv. so we can just return y channel without affecting any other tasks?
         fr = NMF_Reducer(featureVector, k).reduceDimension()
 
     saveToFile(fr, fdTechnique, frTechnique)

@@ -2,8 +2,7 @@
 TO-DO:
 1. SIFT needs to be fixed.
 2. LDA needs to be implemented.
-3. SVD needs to be implemented.
-4. NMF needs to be implemented.
+4. Need to convert CM to hist for NMF.
 """
 
 from Main.tasks.Task1 import startTask1

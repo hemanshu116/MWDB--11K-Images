@@ -26,10 +26,10 @@ def saveToFile(fr, frType, fdType, flabel, k):
 
     fr.rename(index=store, inplace=True)
     # print(json.loads(fr.to_json()))
-    with open(config.DATABASE_FOLDER + frTechniqueDict[frType] + '_' + fdTechniqueDict[fdType] + '_' + flabel + '_' + k
-              + '.json', 'w',
-              encoding='utf-8') as f:
+    json_file = frTechniqueDict[frType] + '_' + fdTechniqueDict[fdType] + '_' + flabel + '_' + k + '.json'
+    with open(os.path.join(config.DATABASE_FOLDER, json_file), 'w', encoding='utf-8') as f:
         json.dump(json.loads(fr.to_json(orient='index')), f, ensure_ascii=True, indent=4)
+
 
 def startTask3(inputs=[], shouldGetInputs=True):
     if shouldGetInputs:
@@ -41,20 +41,20 @@ def startTask3(inputs=[], shouldGetInputs=True):
 
     meta_data = pd.read_csv(config.METADATA_FOLDER)
     if flTechnique == '1':
-        aspectOfHand = 'dorsal'
-        flabel = 'DORSAL'
-        imageSet = meta_data.loc[(meta_data['aspectOfHand'].str.contains(aspectOfHand))]
-    elif flTechnique == '2':
-        aspectOfHand = 'palmer'
-        flabel = 'PALMER'
-        imageSet = meta_data.loc[(meta_data['aspectOfHand'].str.contains(aspectOfHand))]
-    elif flTechnique == '3':
         aspectOfHand = 'left'
         flabel = 'LEFT'
         imageSet = meta_data.loc[(meta_data['aspectOfHand'].str.contains(aspectOfHand))]
-    elif flTechnique == '4':
+    elif flTechnique == '2':
         aspectOfHand = 'right'
         flabel = 'RIGHT'
+        imageSet = meta_data.loc[(meta_data['aspectOfHand'].str.contains(aspectOfHand))]
+    elif flTechnique == '3':
+        aspectOfHand = 'dorsal'
+        flabel = 'DORSAL'
+        imageSet = meta_data.loc[(meta_data['aspectOfHand'].str.contains(aspectOfHand))]
+    elif flTechnique == '4':
+        aspectOfHand = 'palmar'
+        flabel = 'PALMAR'
         imageSet = meta_data.loc[(meta_data['aspectOfHand'].str.contains(aspectOfHand))]
     elif flTechnique == '5':
         accessories = '1'
@@ -76,6 +76,7 @@ def startTask3(inputs=[], shouldGetInputs=True):
         print("Wrong input")
         exit()
 
+    # print('Image set: ', imageSet)
     if fdTechnique == "1":
         cm = CM()
         featureVector = cm.CMFeatureDescriptorForImageSubset(imageSet)
@@ -96,7 +97,7 @@ def startTask3(inputs=[], shouldGetInputs=True):
 
 
     if frTechnique == "1":
-        fr = PCA_Reducer(featureVector, k).reduceDimension()
+            fr = PCA_Reducer(featureVector, k).reduceDimension()
     if frTechnique == "2":
         fr = LDA_Reducer(featureVector, k).reduceDimension()
     if frTechnique == "3":
@@ -105,6 +106,7 @@ def startTask3(inputs=[], shouldGetInputs=True):
         fr = NMF_Reducer(featureVector, k).reduceDimension()
     saveToFile(fr, fdTechnique, frTechnique, flabel, str(k))
 
+
 def getUserInputForTask1():
     print("Please select the feature descriptor technique")
     print("1. Color Moments")
@@ -112,25 +114,30 @@ def getUserInputForTask1():
     print("3. Histogram of Oriented Gradients")
     print("4. SIFT")
     fdInput = input()
+
     print("Please select one of the labels")
     print("1. Left-hand")
     print("2. Right-hand")
     print("3. Dorsal")
-    print("4. Palmer")
+    print("4. Palmar")
     print("5. With accessories")
     print("6. Without accessories")
     print("7. Male")
     print("8. Female")
     flInput = input()
+
     print("Please select the feature reduction technique")
     print("1. PCA")
     print("2. LDA")
     print("3. SVD")
     print("4. NMF")
     frInput = input()
+
     print("Please enter K number of latent semantics")
     k = input()
+
     return [fdInput, flInput, frInput, k]
+
 
 # Uncomment to run task independently
 # startTask3()

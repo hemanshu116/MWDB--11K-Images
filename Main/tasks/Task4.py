@@ -17,8 +17,8 @@ def startTask4():
     k = inputTask2[5]
     imageId = inputTask2[3]
     m = int(inputTask2[4])
-    with open(config.DATABASE_FOLDER + frTechniqueDict.get(fdTechnique) + "_" + fdTechniqueDict.get(frTechnique) + "_"
-              + flTechniqueDict.get(flTechnique) + "_" + k + ".json", "r") as f:
+    with open(os.path.join(config.DATABASE_FOLDER, frTechniqueDict.get(fdTechnique) + "_" + fdTechniqueDict.get(frTechnique) + "_"
+              + flTechniqueDict.get(flTechnique) + "_" + k + ".json"), "r") as f:
         data = json.load(f)
     latentFeatureDict = {}
     for key, value in data.items():
