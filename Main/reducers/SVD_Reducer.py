@@ -6,8 +6,15 @@ class SVD_Reducer:
     def __init__(self, featureDescriptor, k):
         self.featureDescriptor = featureDescriptor
         self.k = k
-
-    def reduceDimension(self):
+        self.imageID = None
         U, S, VT = np.linalg.svd(self.featureDescriptor, full_matrices=True)
-        principalDf = pd.DataFrame(data=U[:, :self.k])
+        self.featureLatentSemantics = VT[:self.k, :].T
+        self.objectLatentsSemantics = U[:, :self.k]
+
+    def reduceDimension(self, featureDescriptor):
+        # self.U, self.S, self.VT = np.linalg.svd(self.featureDescriptor, full_matrices=False)
+        principalDf = pd.DataFrame(data=np.dot(featureDescriptor, self.featureLatentSemantics))
         return principalDf
+
+    def saveImageID(self, imageID):
+        self.imageID = imageID

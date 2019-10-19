@@ -4,6 +4,8 @@ IMAGE_FOLDER = "H:\Asu\mwdb\project-phase-0\CSE 515 Fall19 - Smaller Dataset\ima
 
 DATABASE_FOLDER = "H:\Asu\mwdb\project-phase-0\CSE 515 Fall19 - Smaller Dataset\Database\\"
 
+VISUALIZATION_FOLDER = "H:\Asu\mwdb\project-phase-0\CSE 515 Fall19 - Smaller Dataset\Visualize\\"
+
 METADATA_FOLDER = "H:\Asu\mwdb\project-phase-0\CSE 515 Fall19 - Smaller Dataset\metadata\HandInfo.csv"
 
 frTechniqueDict = {"1": "CM", "2": "LBP", "3": "HOG", "4": "SIFT"}

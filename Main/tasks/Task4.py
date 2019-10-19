@@ -2,6 +2,7 @@ import json
 import os
 
 import numpy as np
+import pickle
 
 import Main.config as config
 from Main.config import frTechniqueDict, fdTechniqueDict, flTechniqueDict
@@ -18,12 +19,16 @@ def startTask4():
     imageId = inputTask2[3]
     m = int(inputTask2[4])
     with open(config.DATABASE_FOLDER + frTechniqueDict.get(fdTechnique) + "_" + fdTechniqueDict.get(frTechnique) + "_"
-              + flTechniqueDict.get(flTechnique) + "_" + k + ".json", "r") as f:
-        data = json.load(f)
+              + flTechniqueDict.get(flTechnique) + "_" + k, "rb") as f:
+        reducerObject = pickle.load(f)
     latentFeatureDict = {}
-    for key, value in data.items():
-        latent = data[key]
-        latentFeatureDict[key] = np.asarray(list(latent.values()))
+    data = reducerObject.reduceDimension(reducerObject.featureDescriptor)
+
+    i = 0
+    for filename in reducerObject.imageID:
+        latent = data.iloc[i][:]
+        latentFeatureDict[filename] = latent
+        i = i + 1
 
     selectedImage = latentFeatureDict[imageId]
     distanceList = findDistance(selectedImage, latentFeatureDict)
@@ -55,10 +60,8 @@ def getUserInputForTask4():
     flInput = input()
     print("Please enter K number of latent semantics")
     k = input()
-    print(config.DATABASE_FOLDER + frTechniqueDict.get(fdInput) + "_"
-          + fdTechniqueDict.get(frInput) + "_" + flTechniqueDict.get(flInput) + "_" + k + ".json")
     fileExists = os.path.exists(config.DATABASE_FOLDER + frTechniqueDict.get(fdInput) + "_"
-                                + fdTechniqueDict.get(frInput) + "_" + flTechniqueDict.get(flInput) + "_" + k + ".json")
+                                + fdTechniqueDict.get(frInput) + "_" + flTechniqueDict.get(flInput) + "_" + k)
     if fileExists:
         print("Database found, still want to recompute? (Y/N)")
         shouldRecompute = input()
@@ -70,7 +73,7 @@ def getUserInputForTask4():
         print("Database was not found, Please enter k for computing")
         print("Please enter K number of latent semantics")
         k = input()
-        startTask3([fdInput, frInput, frInput, k], False)
+        startTask3([fdInput, flInput, frInput, k], False)
     print("Enter the image path for matching")
     imagePath = input()
     print("Enter the number of matches to return")

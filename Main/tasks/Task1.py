@@ -1,9 +1,9 @@
 import json
 import os
-
+import pickle
 import pandas as pd
 import numpy as np
-
+import matplotlib.pyplot as plt
 from sklearn.preprocessing import normalize
 
 import Main.config as config
@@ -61,18 +61,26 @@ def startTask1(inputs=[], shouldGetInputs=True):
         exit()
     k = int(k)
     fr = ""
-    print(len(featureVector))
-    if int(frTechnique) == 1:
-        featureVector = normalize(featureVector, axis=1, norm='l2')
-        fr = PCA_Reducer(featureVector, k).reduceDimension()
-    if int(frTechnique) == 2:
-        fr = LDA_Reducer(featureVector, k).reduceDimension()
-    if int(frTechnique) == 3:
-        fr = SVD_Reducer(featureVector, k).reduceDimension()
-    if int(frTechnique) == 4:
-        fr = NMF_Reducer(featureVector, k).reduceDimension()
 
-    saveToFile(fr, fdTechnique, frTechnique)
+    if int(frTechnique) == 1:
+        fr = PCA_Reducer(featureVector, k)
+    if int(frTechnique) == 2:
+        fr = LDA_Reducer(featureVector, k)
+    if int(frTechnique) == 3:
+        fr = SVD_Reducer(featureVector, k)
+    if int(frTechnique) == 4:
+        fr = NMF_Reducer(featureVector, k)
+
+    # save for visualization
+    store = []
+    for file in os.listdir(str(config.IMAGE_FOLDER)):
+        filename = os.fsdecode(file)
+        if filename.endswith(".jpg"):
+            store.append(filename)
+    # plot_term_weight_pairs(fr.objectLatentsSemantics, store)
+
+    filehandler = open(config.DATABASE_FOLDER + frTechniqueDict[fdTechnique] + '_' + fdTechniqueDict[frTechnique], 'wb')
+    pickle.dump(fr, filehandler)
 
 
 def getUserInputForTask1():
@@ -93,5 +101,20 @@ def getUserInputForTask1():
     return [fdInput, frInput, k]
 
 
+def plot_term_weight_pairs(components, col_index):
+    components_df = pd.DataFrame(components)
+    print(components.shape)
+    components_df['index'] = col_index
+    components_df.set_index('index')
+    print(components)
+    output = {}
+    num_components = len(components_df.columns)
+    for i in range(0, num_components):
+        sorted_vals = components_df.iloc[:, i].sort_values(ascending=False)
+        output[i] = (list(zip(sorted_vals, sorted_vals.index)))
+    fp = open(config.DATABASE_FOLDER + 'test.json', 'w')
+    json.dump(output, fp)
+
+
 # Uncomment to run task independently
-startTask1()
+#startTask1()

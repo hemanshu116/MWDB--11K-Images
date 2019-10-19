@@ -48,12 +48,14 @@ class HOG:
         files = os.listdir(str(config.IMAGE_FOLDER))  # dir is your directory path
         number_files = len(files)
         i = 0;
+        fileNames = []
         for file in os.listdir(str(config.IMAGE_FOLDER)):
             filename = os.fsdecode(file)
             if filename.endswith(".jpg") and (filename in imageSet.imageName.values):
                 i = i + 1
+                fileNames.append(filename)
                 hognp = hog.HOGForSingleImage(str(config.IMAGE_FOLDER) + "\\" + filename)
                 progress(i, number_files)
                 storeHogFD.append(hognp.tolist())
         print()
-        return storeHogFD
+        return storeHogFD, fileNames
