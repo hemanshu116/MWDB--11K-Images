@@ -15,7 +15,6 @@ from Main.reducers.SVD_Reducer import SVD_Reducer
 from Main.reducers.NMF_Reducer import NMF_Reducer
 
 
-
 def startTask5():
     # Get inputs from usr
     inps = get_usr_input()
@@ -32,7 +31,7 @@ def startTask5():
     img_latent_features = np.dot(feature_vec, np.transpose(latent_semantics))   # Will this work for all feat desc?
 
     # Inverse Transform matrix
-    feature_vec_reconstructed =
+    # feature_vec_reconstructed =
 
     # Calc diff b/w I and I'
 

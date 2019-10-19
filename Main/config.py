@@ -7,8 +7,9 @@ IMAGE_FOLDER = "E:\Personal Stuff\Projects\ASU\MWDB\Working_Area\Dataset2"
 # Location where feature descriptors/Latent semantics will be stored.
 DATABASE_FOLDER = "E:\Personal Stuff\Projects\ASU\MWDB\Working_Area\MWDB--11K-Images\Database"
 
-VISUALIZATION_FOLDER = "H:\Asu\mwdb\project-phase-0\CSE 515 Fall19 - Smaller Dataset\Visualize\\"
+VISUALIZATION_FOLDER = "E:\Personal Stuff\Projects\ASU\MWDB\Working_Area\MWDB--11K-Images\Visualize\\"
 
+# Path where metadata csv file is present.
 METADATA_FOLDER = "E:\Personal Stuff\Projects\ASU\MWDB\Working_Area\Metadata\HandInfo.csv"
 
 frTechniqueDict = {"1": "CM", "2": "LBP", "3": "HOG", "4": "SIFT"}

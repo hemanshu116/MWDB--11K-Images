@@ -105,9 +105,11 @@ def startTask3(inputs=[], shouldGetInputs=True):
         fr = NMF_Reducer(featureVector, k)
 
     fr.saveImageID(imageID)
+
     # save for visualization pending
 
-    filehandler = open(config.DATABASE_FOLDER + frTechniqueDict[fdTechnique] + '_' + fdTechniqueDict[frTechnique] + '_' + flabel + '_' + str(k), 'wb')
+    file_path = os.path.join(config.DATABASE_FOLDER, frTechniqueDict[fdTechnique] + '_' + fdTechniqueDict[frTechnique] + '_' + flabel + '_' + str(k))
+    filehandler = open(file_path, 'wb')
     pickle.dump(fr, filehandler)
 
 

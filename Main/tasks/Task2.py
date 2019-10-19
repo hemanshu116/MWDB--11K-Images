@@ -77,4 +77,4 @@ def getUserInputForTask2():
     return [fdInput, frInput, imagePath, int(m)]
 
 # Uncomment to run task independently
-startTask2()
+# startTask2()

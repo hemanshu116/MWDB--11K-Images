@@ -15,4 +15,4 @@ def visualizeObjectLatentSemantic(reducer):
     print(objectLatent.sort_values(by=['1'], ascending=False))
 
 
-visualizeObjectLatentSemantic('svd')
+# visualizeObjectLatentSemantic('svd')
