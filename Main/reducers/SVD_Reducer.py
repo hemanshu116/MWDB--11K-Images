@@ -12,7 +12,7 @@ class SVD_Reducer:
         self.scaler = StandardScaler()
         self.scaler.fit(self.featureDescriptor)
         U, S, VT = np.linalg.svd(self.scaler.transform(self.featureDescriptor), full_matrices=True)
-        if min(U.shape) <= k or min(VT.shape) <= k:
+        if min(U.shape) < k or min(VT.shape) < k:
             print("Cannot compute on SVD on components higher than min of", U.shape)
             exit()
         self.featureLatentSemantics = VT[:self.k, :].T

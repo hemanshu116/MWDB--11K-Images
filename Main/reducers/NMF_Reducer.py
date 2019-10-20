@@ -9,7 +9,7 @@ class NMF_Reducer:
         self.k = k
         scaler = MinMaxScaler()
         scaler.fit(featureDescriptor)
-        if min(len(featureDescriptor[0]), len(featureDescriptor)) <= k:
+        if min(len(featureDescriptor[0]), len(featureDescriptor)) < k:
             print()
             print("Cannot compute on NMF on components higher than min of [", len(featureDescriptor[0]), ",",
                   len(featureDescriptor)," ]")
