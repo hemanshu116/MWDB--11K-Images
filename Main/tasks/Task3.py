@@ -16,21 +16,7 @@ from Main.reducers.LDA_Reducer import LDA_Reducer
 from Main.reducers.NMF_Reducer import NMF_Reducer
 from Main.reducers.PCA_Reducer import PCA_Reducer
 from Main.reducers.SVD_Reducer import SVD_Reducer
-
-def saveToFile(fr, frType, fdType, flabel, k):
-    store = {}
-    i = 0
-    for file in os.listdir(str(config.IMAGE_FOLDER)):
-        filename = os.fsdecode(file)
-        if filename.endswith(".jpg"):
-            store[i] = filename
-            i = i + 1
-
-    fr.rename(index=store, inplace=True)
-    # print(json.loads(fr.to_json()))
-    json_file = frTechniqueDict[frType] + '_' + fdTechniqueDict[fdType] + '_' + flabel + '_' + k + '.json'
-    with open(os.path.join(config.DATABASE_FOLDER, json_file), 'w', encoding='utf-8') as f:
-        json.dump(json.loads(fr.to_json(orient='index')), f, ensure_ascii=True, indent=4)
+from Main.tasks.Task1 import output_term_weight_pairs
 
 
 def startTask3(inputs=[], shouldGetInputs=True):
@@ -118,10 +104,11 @@ def startTask3(inputs=[], shouldGetInputs=True):
 
     fr.saveImageID(imageSet)
 
-    # save for visualization pending
+    output_filename = frTechniqueDict[fdTechnique] + '_' + fdTechniqueDict[frTechnique] + '_' + flabel + '_' + str(k)
 
-    file_path = os.path.join(config.DATABASE_FOLDER, frTechniqueDict[fdTechnique] + '_' + fdTechniqueDict[frTechnique] + '_' + flabel + '_' + str(k))
-    filehandler = open(file_path, 'wb')
+    output_term_weight_pairs(fr.objectLatentSemantics, newTemp, config.DATABASE_FOLDER + 'Object_Semantics_' + output_filename)
+
+    filehandler = open(config.DATABASE_FOLDER + output_filename, 'wb')
     pickle.dump(fr, filehandler)
 
 
@@ -158,4 +145,5 @@ def getUserInputForTask1():
 
 
 # Uncomment to run task independently
-# startTask3()
+if __name__ == "__main__":
+    startTask3()

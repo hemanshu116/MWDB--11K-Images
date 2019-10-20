@@ -69,4 +69,5 @@ def getUserInputForTask2():
 
 
 # Uncomment to run task independently
-# startTask2()
+if __name__ == "__main__":
+    startTask2()

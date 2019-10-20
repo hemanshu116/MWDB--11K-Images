@@ -80,9 +80,12 @@ def startTask1(inputs=[], shouldGetInputs=True):
         filename = os.fsdecode(file)
         if filename.endswith(".jpg"):
             store.append(filename)
-    # plot_term_weight_pairs(fr.objectLatentsSemantics, store)
 
-    filehandler = open(config.DATABASE_FOLDER + frTechniqueDict[fdTechnique] + '_' + fdTechniqueDict[frTechnique] + "_" + str(k), 'wb')
+    output_filename = frTechniqueDict[fdTechnique] + '_' + fdTechniqueDict[frTechnique] + "_" + str(k)
+
+    output_term_weight_pairs(fr.objectLatentSemantics, store, config.DATABASE_FOLDER + 'Object_Semantics_' + output_filename)
+
+    filehandler = open(config.DATABASE_FOLDER + output_filename, 'wb')
     pickle.dump(fr, filehandler)
 
 
@@ -104,7 +107,7 @@ def getUserInputForTask1():
     return [fdInput, frInput, k]
 
 
-def display_term_weight_pairs(components, col_index):
+def output_term_weight_pairs(components, col_index, filepath):
     components_df = pd.DataFrame(components).T
     print(components.shape)
     components_df.columns = col_index
@@ -113,9 +116,10 @@ def display_term_weight_pairs(components, col_index):
     for i in range(1, num_components+1):
         sorted_vals = components_df.iloc[i-1, :].sort_values(ascending=False)
         output[i] = (list(zip(sorted_vals, sorted_vals.index)))
-    fp = open(config.DATABASE_FOLDER + 'test.json', 'w+')
+    fp = open(filepath+'.json', 'w+')
     json.dump(output, fp)
 
 
 # Uncomment to run task independently
-# startTask1()
+if __name__ == "__main__":
+    startTask1()
