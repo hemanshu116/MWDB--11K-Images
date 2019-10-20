@@ -83,7 +83,6 @@ class CM:
         # Iterating on all the images in the selected folder to calculate HOG FD for each of the images in the subset
         storeCmFD = []
         cm = CM()
-        files = os.listdir(str(config.IMAGE_FOLDER))  # dir is your directory path
         number_files = len(imageSet)
         i = 0
         for filename in imageSet:
