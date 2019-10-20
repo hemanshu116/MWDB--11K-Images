@@ -105,7 +105,7 @@ def startTask3(inputs=[], shouldGetInputs=True):
         fr = NMF_Reducer(featureVector, k)
 
     fr.saveImageID(imageID)
-
+    fr.compute_threshold()
     # save for visualization pending
 
     file_path = os.path.join(config.DATABASE_FOLDER, frTechniqueDict[fdTechnique] + '_' + fdTechniqueDict[frTechnique] + '_' + flabel + '_' + str(k))

@@ -1,6 +1,9 @@
 import pandas as pd
 import numpy as np
 
+from Main.helper import find_distance_2_vectors
+
+
 
 class SVD_Reducer:
     def __init__(self, featureDescriptor, k):
@@ -16,5 +19,15 @@ class SVD_Reducer:
         principalDf = pd.DataFrame(data=np.dot(featureDescriptor, self.featureLatentSemantics))
         return principalDf
 
+    def inv_transform(self, data):
+        return np.dot(data, np.transpose(self.featureLatentSemantics))
+
     def saveImageID(self, imageID):
         self.imageID = imageID
+
+    def compute_threshold(self):
+        Z = np.dot(self.objectLatentsSemantics, self.featureLatentSemantics)
+        reconstructed_feat_desc = np.dot(Z, np.transpose(self.featureLatentSemantics))
+        reconstruction_err = find_distance_2_vectors(reconstructed_feat_desc, self.featureDescriptor)
+        self.threshold = np.max(reconstruction_err)
+

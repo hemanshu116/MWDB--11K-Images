@@ -1,7 +1,7 @@
-# IMAGE_PATH = "D:\ASU Projects\CSE 551 - MWDB\Phase-1\CSE 515 Fall19 - Smaller Dataset\Hand_0008110.jpg"
+# 11k images folder location.
+FULL_IMAGESET_FOLDER = "E:\Personal Stuff\Projects\ASU\MWDB\Working_Area\Hands"
 
 # Image DB Location.
-# IMAGE_FOLDER = "D:\ASU Projects\CSE 551 - MWDB\MWDB--11K-Images\images"
 IMAGE_FOLDER = "E:\Personal Stuff\Projects\ASU\MWDB\Working_Area\Dataset2"
 
 # Location where feature descriptors/Latent semantics will be stored.
