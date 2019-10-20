@@ -145,7 +145,8 @@ def get_unseen_img_fd(feat_desc_ch):
 
 
 def get_unseen_img_threshold(unseen_img_desc, reducer_obj):
-    reduced_desc = reducer_obj.reduceDimension(unseen_img_desc)
+    tmp = np.reshape(unseen_img_desc, (-1, len(unseen_img_desc)))   # Converting 1D arr to 2D arr.
+    reduced_desc = reducer_obj.reduceDimension(tmp)
     reconstructed_desc = reducer_obj.inv_transform(reduced_desc)
     threshold = find_distance_2_vectors(unseen_img_desc, reconstructed_desc)
     return threshold[0]
