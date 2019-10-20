@@ -11,6 +11,7 @@ from Main.config import frTechniqueDict, fdTechniqueDict
 from Main.featureDescriptors.CM import CM
 from Main.featureDescriptors.HOG import HOG
 from Main.featureDescriptors.LBP import LBP
+from Main.featureDescriptors.SIFT import SIFT
 from Main.reducers.LDA_Reducer import LDA_Reducer
 from Main.reducers.NMF_Reducer import NMF_Reducer
 from Main.reducers.PCA_Reducer import PCA_Reducer
@@ -86,7 +87,6 @@ def startTask3(inputs=[], shouldGetInputs=True):
             newTemp.append(filename)
 
     imageSet = newTemp
-    print(imageSet)
 
     if fdTechnique == "1":
         cm = CM()
@@ -101,7 +101,8 @@ def startTask3(inputs=[], shouldGetInputs=True):
         featureVector = hog.HOGFeatureDescriptorForImageSubset(imageSet)
 
     elif fdTechnique == "4":
-        pass
+        sift = SIFT()
+        featureVector = sift.SIFTFeatureDescriptorForImageSubset(imageSet)
     else:
         print("Wrong input")
         exit()
@@ -157,4 +158,4 @@ def getUserInputForTask1():
 
 
 # Uncomment to run task independently
-startTask3()
+# startTask3()

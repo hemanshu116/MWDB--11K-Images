@@ -7,7 +7,7 @@ import pickle
 import Main.config as config
 from Main.config import frTechniqueDict, fdTechniqueDict, flTechniqueDict
 from Main.tasks.Task3 import startTask3
-from Main.helper import findDistance
+from Main.helper import findDistance, normalize_score, printMatch
 
 
 def startTask4():
@@ -71,25 +71,12 @@ def getUserInputForTask4():
             startTask3([fdInput, flInput, frInput, k], False)
     else:
         print("Database was not found, Please enter k for computing")
-        print("Please enter K number of latent semantics")
-        k = input()
         startTask3([fdInput, flInput, frInput, k], False)
     print("Enter the image path for matching")
     imagePath = input()
     print("Enter the number of matches to return")
     m = input()
     return [fdInput, flInput, frInput, imagePath, m, k]
-
-
-def printMatch(finalList, k):
-    sortList = sorted(finalList.items(), key=lambda x: x[1])
-    i = 0
-    for keyValue in sortList:
-        if i == int(k):
-            break
-        image, score = keyValue
-        print(image + " : " + str(100.0 - score) + " % match")
-        i = i + 1
 
 
 # Uncomment to run task independently

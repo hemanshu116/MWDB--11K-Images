@@ -8,7 +8,7 @@ import pandas as pd
 
 from Main import config
 from Main.config import DATABASE_FOLDER, frTechniqueDict, fdTechniqueDict
-from Main.helper import findDistance, normalize_score
+from Main.helper import findDistance, normalize_score, printMatch
 from Main.tasks.Task1 import startTask1
 
 
@@ -34,27 +34,6 @@ def startTask2():
     selectedImage = latentFeatureDict[imageId]
     distanceList = findDistance(selectedImage, latentFeatureDict)
     printMatch(distanceList, m)
-
-
-def printMatch(finalList, k):
-    sortList = sorted(finalList.items(), key=lambda x: x[1])
-    i = 0
-    forNormalize = []
-    for keyValue in sortList:
-        image, score = keyValue
-        forNormalize.append(score)
-        # print(image + " : " + str(100.0 - score) + " % match")
-        # copyfile(config.IMAGE_FOLDER + "\\" + image, config.VISUALISE_FOLDER + image)
-
-    afterNormal = list(normalize_score(forNormalize))
-    for i in range(len(sortList)):
-        sortList[i] = 1 - afterNormal[i]
-
-    for keyValue in sortList:
-        image, score = keyValue
-        print(image + " : " + score + " match")
-        copyfile(config.IMAGE_FOLDER + "\\" + image, config.VISUALISE_FOLDER + image)
-    print()
 
 
 def getUserInputForTask2():
@@ -90,4 +69,4 @@ def getUserInputForTask2():
 
 
 # Uncomment to run task independently
-startTask2()
+# startTask2()
