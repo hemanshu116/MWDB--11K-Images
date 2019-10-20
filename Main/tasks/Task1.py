@@ -2,9 +2,7 @@ import json
 import os
 import pickle
 import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-from sklearn.preprocessing import normalize
+
 
 import Main.config as config
 from Main.config import frTechniqueDict, fdTechniqueDict
@@ -62,15 +60,16 @@ def startTask1(inputs=[], shouldGetInputs=True):
 
     k = int(k)
     fr = ""
-    print('length of feature vector', len(featureVector))
 
     if int(frTechnique) == 1:
         fr = PCA_Reducer(featureVector, k)
     if int(frTechnique) == 2:
         fr = LDA_Reducer(featureVector, k)
     if int(frTechnique) == 3:
+
         fr = SVD_Reducer(featureVector, k)
     if int(frTechnique) == 4:
+
         fr = NMF_Reducer(featureVector, k)
 
     # save for visualization
@@ -81,7 +80,7 @@ def startTask1(inputs=[], shouldGetInputs=True):
             store.append(filename)
     # plot_term_weight_pairs(fr.objectLatentsSemantics, store)
 
-    filehandler = open(config.DATABASE_FOLDER + frTechniqueDict[fdTechnique] + '_' + fdTechniqueDict[frTechnique], 'wb')
+    filehandler = open(config.DATABASE_FOLDER + frTechniqueDict[fdTechnique] + '_' + fdTechniqueDict[frTechnique] + "_" + str(k), 'wb')
     pickle.dump(fr, filehandler)
 
 
@@ -119,4 +118,4 @@ def plot_term_weight_pairs(components, col_index):
 
 
 # Uncomment to run task independently
-# startTask1()
+#startTask1()

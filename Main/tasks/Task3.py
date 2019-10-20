@@ -3,7 +3,8 @@ import os
 
 import pandas as pd
 import pickle
-from sklearn.preprocessing import normalize
+from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import MinMaxScaler
 
 import Main.config as config
 from Main.config import frTechniqueDict, fdTechniqueDict
@@ -76,18 +77,28 @@ def startTask3(inputs=[], shouldGetInputs=True):
         print("Wrong input")
         exit()
 
-    # print('Image set: ', imageSet)
+
+    i = 0;
+    newTemp = []
+    for file in os.listdir(str(config.IMAGE_FOLDER)):
+        filename = os.fsdecode(file)
+        if filename.endswith(".jpg") and (filename in imageSet.imageName.values):
+            newTemp.append(filename)
+
+    imageSet = newTemp
+    # print(imageSet)
+
     if fdTechnique == "1":
         cm = CM()
-        featureVector, imageID = cm.CMFeatureDescriptorForImageSubset(imageSet)
+        featureVector = cm.CMFeatureDescriptorForImageSubset(imageSet)
 
     elif fdTechnique == "2":
         lbp = LBP()
-        featureVector, imageID = lbp.LBPFeatureDescriptorForImageSubset(imageSet)
+        featureVector = lbp.LBPFeatureDescriptorForImageSubset(imageSet)
 
     elif fdTechnique == "3":
         hog = HOG()
-        featureVector, imageID = hog.HOGFeatureDescriptorForImageSubset(imageSet)
+        featureVector = hog.HOGFeatureDescriptorForImageSubset(imageSet)
 
     elif fdTechnique == "4":
         pass
@@ -104,8 +115,9 @@ def startTask3(inputs=[], shouldGetInputs=True):
     if frTechnique == "4":
         fr = NMF_Reducer(featureVector, k)
 
-    fr.saveImageID(imageID)
+    fr.saveImageID(imageSet)
     fr.compute_threshold()
+
     # save for visualization pending
 
     file_path = os.path.join(config.DATABASE_FOLDER, frTechniqueDict[fdTechnique] + '_' + fdTechniqueDict[frTechnique] + '_' + flabel + '_' + str(k))

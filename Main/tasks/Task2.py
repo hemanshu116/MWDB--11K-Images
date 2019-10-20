@@ -1,13 +1,14 @@
 import json
 import os
 import pickle
+from shutil import copyfile
 
 import numpy as np
 import pandas as pd
 
 from Main import config
 from Main.config import DATABASE_FOLDER, frTechniqueDict, fdTechniqueDict
-from Main.helper import findDistance
+from Main.helper import findDistance, normalize_score
 from Main.tasks.Task1 import startTask1
 
 
@@ -17,16 +18,18 @@ def startTask2():
     frTechnique = inputTask2[1]
     imageId = inputTask2[2]
     m = inputTask2[3]
-    with open(config.DATABASE_FOLDER + frTechniqueDict[fdTechnique] + '_' + fdTechniqueDict[frTechnique], "rb") as f:
+    k = inputTask2[4]
+    with open(config.DATABASE_FOLDER + frTechniqueDict[fdTechnique] + '_' + fdTechniqueDict[frTechnique] + "_" + str(k),
+              "rb") as f:
         reducerObject = pickle.load(f)
     latentFeatureDict = {}
     data = reducerObject.reduceDimension(reducerObject.featureDescriptor)
-    i=0
+    i = 0
     for file in os.listdir(str(config.IMAGE_FOLDER)):
         filename = os.fsdecode(file)
         latent = data.iloc[i][:]
         latentFeatureDict[filename] = latent
-        i=i+1
+        i = i + 1
 
     selectedImage = latentFeatureDict[imageId]
     distanceList = findDistance(selectedImage, latentFeatureDict)
@@ -36,12 +39,17 @@ def startTask2():
 def printMatch(finalList, k):
     sortList = sorted(finalList.items(), key=lambda x: x[1])
     i = 0
+    forNormalize = []
     for keyValue in sortList:
         if i == int(k):
             break
         image, score = keyValue
-        print(image + " : " + str(100.0 - score) + " % match")
+        forNormalize.append(score)
+        # print(image + " : " + str(100.0 - score) + " % match")
+        # copyfile(config.IMAGE_FOLDER + "\\" + image, config.VISUALISE_FOLDER + image)
         i = i + 1
+
+    print(list(normalize_score(forNormalize)))
 
 
 def getUserInputForTask2():
@@ -57,24 +65,24 @@ def getUserInputForTask2():
     print("3. SVD")
     print("4. NMF")
     frInput = input()
-    fileExists = os.path.exists(DATABASE_FOLDER + "\\" + frTechniqueDict.get(fdInput) + "_" + fdTechniqueDict.get(frInput))
+    print("Please enter K number of latent semantics")
+    k = input()
+    fileExists = os.path.exists(
+        DATABASE_FOLDER + "\\" + frTechniqueDict.get(fdInput) + "_" + fdTechniqueDict.get(frInput) + "_" + str(k))
     if fileExists:
         print("Database found, still want to recompute? (Y/N)")
         shouldRecompute = input()
         if shouldRecompute.lower() == "y":
-            print("Please enter K number of latent semantics")
-            k = input()
             startTask1([fdInput, frInput, k], False)
     else:
-        print("Database was not found, Please enter k for computing")
-        print("Please enter K number of latent semantics")
-        k = input()
+        print("Database was not found, computing...")
         startTask1([fdInput, frInput, k], False)
     print("Enter the image path for matching")
     imagePath = input()
     print("Enter the number of matches to return")
     m = input()
-    return [fdInput, frInput, imagePath, int(m)]
+    return [fdInput, frInput, imagePath, int(m), int(k)]
+
 
 # Uncomment to run task independently
-# startTask2()
+startTask2()

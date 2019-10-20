@@ -84,16 +84,12 @@ class CM:
         storeCmFD = []
         cm = CM()
         files = os.listdir(str(config.IMAGE_FOLDER))  # dir is your directory path
-        number_files = len(files)
+        number_files = len(imageSet)
         i = 0
-        fileNames = []
-        for file in os.listdir(str(config.IMAGE_FOLDER)):
-            filename = os.fsdecode(file)
-            if filename.endswith(".jpg") and (filename in imageSet.imageName.values):
-                fileNames.append(filename)
-                hognp = cm.CMForSingleImage(str(config.IMAGE_FOLDER) + "\\" + filename)
-                storeCmFD.append(hognp.tolist())
-                i = i + 1
-                progress(i, number_files)
+        for filename in imageSet:
+            hognp = cm.CMForSingleImage(str(config.IMAGE_FOLDER) + "\\" + filename)
+            storeCmFD.append(hognp.tolist())
+            i = i + 1
+            progress(i, number_files)
         print(len(storeCmFD))
-        return storeCmFD, fileNames
+        return storeCmFD
