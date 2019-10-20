@@ -9,6 +9,7 @@ from Main.config import frTechniqueDict, fdTechniqueDict
 from Main.featureDescriptors.CM import CM
 from Main.featureDescriptors.HOG import HOG
 from Main.featureDescriptors.LBP import LBP
+from Main.featureDescriptors.SIFT import SIFT
 from Main.reducers.LDA_Reducer import LDA_Reducer
 from Main.reducers.NMF_Reducer import NMF_Reducer
 from Main.reducers.PCA_Reducer import PCA_Reducer
@@ -53,7 +54,8 @@ def startTask1(inputs=[], shouldGetInputs=True):
         featureVector = hog.HOGFeatureDescriptor()
         # return featureVector
     elif int(fdTechnique) == 4:
-        pass
+        sift = SIFT()
+        featureVector = sift.SIFTFeatureDescriptor()
     else:
         print("Wrong input")
         exit()
@@ -102,20 +104,18 @@ def getUserInputForTask1():
     return [fdInput, frInput, k]
 
 
-def plot_term_weight_pairs(components, col_index):
-    components_df = pd.DataFrame(components)
+def display_term_weight_pairs(components, col_index):
+    components_df = pd.DataFrame(components).T
     print(components.shape)
-    components_df['index'] = col_index
-    components_df.set_index('index')
-    print(components)
+    components_df.columns = col_index
     output = {}
-    num_components = len(components_df.columns)
-    for i in range(0, num_components):
-        sorted_vals = components_df.iloc[:, i].sort_values(ascending=False)
+    num_components = len(components_df)
+    for i in range(1, num_components+1):
+        sorted_vals = components_df.iloc[i-1, :].sort_values(ascending=False)
         output[i] = (list(zip(sorted_vals, sorted_vals.index)))
-    fp = open(config.DATABASE_FOLDER + 'test.json', 'w')
+    fp = open(config.DATABASE_FOLDER + 'test.json', 'w+')
     json.dump(output, fp)
 
 
 # Uncomment to run task independently
-#startTask1()
+# startTask1()

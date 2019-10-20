@@ -41,15 +41,20 @@ def printMatch(finalList, k):
     i = 0
     forNormalize = []
     for keyValue in sortList:
-        if i == int(k):
-            break
         image, score = keyValue
         forNormalize.append(score)
         # print(image + " : " + str(100.0 - score) + " % match")
         # copyfile(config.IMAGE_FOLDER + "\\" + image, config.VISUALISE_FOLDER + image)
-        i = i + 1
 
-    print(list(normalize_score(forNormalize)))
+    afterNormal = list(normalize_score(forNormalize))
+    for i in range(len(sortList)):
+        sortList[i] = 1 - afterNormal[i]
+
+    for keyValue in sortList:
+        image, score = keyValue
+        print(image + " : " + score + " match")
+        copyfile(config.IMAGE_FOLDER + "\\" + image, config.VISUALISE_FOLDER + image)
+    print()
 
 
 def getUserInputForTask2():
