@@ -59,14 +59,12 @@ class LBP:
         storeLbpFD = []
         lbp = LBP()
         files = os.listdir(str(config.IMAGE_FOLDER))  # dir is your directory path
-        number_files = len(files)
+        number_files = len(imageSet)
         i = 0
-        for file in os.listdir(str(config.IMAGE_FOLDER)):
-            filename = os.fsdecode(file)
-            if filename.endswith(".jpg") and (filename in imageSet.imageName.values):
-                hognp = lbp.LBPForSingleImage(str(config.IMAGE_FOLDER) + "\\" + filename)
-                storeLbpFD.append(hognp.tolist())
-                i = i + 1
-                progress(i, number_files)
-        print()
+        for filename in imageSet:
+            hognp = lbp.LBPForSingleImage(str(config.IMAGE_FOLDER) + "\\" + filename)
+            storeLbpFD.append(hognp.tolist())
+            i = i + 1
+            progress(i, number_files)
+        print(len(storeLbpFD))
         return storeLbpFD
