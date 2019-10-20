@@ -18,7 +18,7 @@ class PCA_Reducer:
             exit()
         self.pca.fit(self.normalizedFeatureDescriptor)
         self.featureLatentSemantics = self.pca.components_.T
-        self.objectLatentsSemantics = self.pca.transform(featureDescriptor)
+        self.objectLatentSemantics = self.pca.transform(featureDescriptor)
 
     def reduceDimension(self, data):
         reducedDimesnions = self.pca.transform(self.scaler.transform(data))

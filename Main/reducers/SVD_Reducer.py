@@ -16,7 +16,7 @@ class SVD_Reducer:
             print("Cannot compute on SVD on components higher than min of", U.shape)
             exit()
         self.featureLatentSemantics = VT[:self.k, :].T
-        self.objectLatentsSemantics = U[:, :self.k]
+        self.objectLatentSemantics = U[:, :self.k]
 
     def reduceDimension(self, featureDescriptor):
         principalDf = pd.DataFrame(data=np.dot(self.scaler.transform(featureDescriptor), self.featureLatentSemantics))
