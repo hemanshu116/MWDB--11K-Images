@@ -20,12 +20,25 @@ class SIFT:
     @classmethod
     def SIFTFeatureDescriptor(self):
         feature_df = SIFT.compute_features_by_folder(config.IMAGE_FOLDER, SIFT.compute_sift_features, return_gray=True)
+        # print(feature_df)
         bow_list = SIFT.compute_BOVW(feature_df['Features'], 500)
         return np.array(bow_list)
 
     @classmethod
     def SIFTFeatureDescriptorForImageSubset(self, imageSet):
-        feature_df = SIFT.compute_features_by_folder(imageSet, SIFT.compute_sift_features, True)
+        feature_list = []
+        number_files = len(imageSet)
+        # print(imageSet)
+        i = 1
+        for fileName in imageSet:
+            img = SIFT.load_img_by_id(join(config.IMAGE_FOLDER, fileName), True)
+            features = SIFT.compute_sift_features(img)
+            feature_list.append(features)
+            progress(i, number_files)
+            i = i + 1
+        print()
+        feature_df = pd.DataFrame({'FileName': imageSet, 'Features': feature_list})
+        # print(feature_df)
         bow_list = SIFT.compute_BOVW(feature_df['Features'], 500)
         feature_df = pd.DataFrame(bow_list)
         return np.array(bow_list)
@@ -51,6 +64,7 @@ class SIFT:
     def compute_features_by_folder(folder_name, ftr_comp_func, return_gray=True):
         folder_path = folder_name
         fileNames = [f for f in listdir(folder_path) if (isfile(join(folder_path, f)) and not (f.startswith('.')))]
+        # print(fileNames)
         feature_list = []
         number_files = len(fileNames)
         i = 1
@@ -61,6 +75,7 @@ class SIFT:
             feature_list.append(features)
             progress(i, number_files)
             i = i + 1
+        print()
         return pd.DataFrame({'FileName': fileNames, 'Features': feature_list})
 
     # Function to load images.
