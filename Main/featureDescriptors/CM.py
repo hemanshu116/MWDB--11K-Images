@@ -1,4 +1,5 @@
 import os
+from os.path import join
 
 import cv2
 from scipy.stats.mstats import skew
@@ -71,7 +72,7 @@ class CM:
         for file in os.listdir(str(config.IMAGE_FOLDER)):
             filename = os.fsdecode(file)
             if filename.endswith(".jpg"):
-                hognp = cm.CMForSingleImage(str(config.IMAGE_FOLDER) + "\\" + filename)
+                hognp = cm.CMForSingleImage(join(str(config.IMAGE_FOLDER),filename))
                 storeCmFD.append(hognp.tolist())
                 i = i + 1
                 progress(i, number_files)
@@ -86,7 +87,7 @@ class CM:
         number_files = len(imageSet)
         i = 0
         for filename in imageSet:
-            hognp = cm.CMForSingleImage(str(config.IMAGE_FOLDER) + "\\" + filename)
+            hognp = cm.CMForSingleImage(join(str(config.IMAGE_FOLDER),filename))
             storeCmFD.append(hognp.tolist())
             i = i + 1
             progress(i, number_files)

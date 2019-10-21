@@ -1,5 +1,6 @@
 import json
 import os
+from os.path import join
 
 import numpy as np
 import pickle
@@ -32,7 +33,8 @@ def startTask4():
 
     selectedImage = latentFeatureDict[imageId]
     distanceList = findDistance(selectedImage, latentFeatureDict)
-    printMatch(distanceList, m)
+    printMatch(distanceList, m, frTechniqueDict.get(fdTechnique) + "_" + fdTechniqueDict.get(frTechnique) + "_"
+              + flTechniqueDict.get(flTechnique) + "_" + k)
 
 
 def getUserInputForTask4():
@@ -60,8 +62,8 @@ def getUserInputForTask4():
     flInput = input()
     print("Please enter K number of latent semantics")
     k = input()
-    fileExists = os.path.exists(config.DATABASE_FOLDER + frTechniqueDict.get(fdInput) + "_"
-                                + fdTechniqueDict.get(frInput) + "_" + flTechniqueDict.get(flInput) + "_" + k)
+    fileExists = os.path.exists(join(config.DATABASE_FOLDER , frTechniqueDict.get(fdInput) + "_"
+                                + fdTechniqueDict.get(frInput) + "_" + flTechniqueDict.get(flInput) + "_" + k))
     if fileExists:
         print("Database found, still want to recompute? (Y/N)")
         shouldRecompute = input()

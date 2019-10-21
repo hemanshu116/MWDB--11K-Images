@@ -1,4 +1,5 @@
 import os
+from os.path import join
 
 import numpy as np
 import sys
@@ -46,7 +47,7 @@ class LBP:
         for file in os.listdir(str(config.IMAGE_FOLDER)):
             filename = os.fsdecode(file)
             if filename.endswith(".jpg"):
-                hognp = lbp.LBPForSingleImage(str(config.IMAGE_FOLDER) + "\\" + filename)
+                hognp = lbp.LBPForSingleImage(join(str(config.IMAGE_FOLDER),filename))
                 storeLbpFD.append(hognp.tolist())
                 i = i + 1
                 progress(i, number_files)
@@ -61,7 +62,7 @@ class LBP:
         number_files = len(imageSet)
         i = 0
         for filename in imageSet:
-            hognp = lbp.LBPForSingleImage(str(config.IMAGE_FOLDER) + "\\" + filename)
+            hognp = lbp.LBPForSingleImage(join(str(config.IMAGE_FOLDER),filename))
             storeLbpFD.append(hognp.tolist())
             i = i + 1
             progress(i, number_files)

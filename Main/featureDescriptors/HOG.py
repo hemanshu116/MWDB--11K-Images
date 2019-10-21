@@ -1,4 +1,5 @@
 import os
+from os.path import join
 
 from skimage import io
 from skimage.feature import hog
@@ -34,7 +35,7 @@ class HOG:
             filename = os.fsdecode(file)
             if filename.endswith(".jpg"):
                 i = i + 1
-                hognp = hog.HOGForSingleImage(str(config.IMAGE_FOLDER) + "\\" + filename)
+                hognp = hog.HOGForSingleImage(join(str(config.IMAGE_FOLDER),filename))
                 progress(i, number_files)
                 storeHogFD.append(hognp.tolist())
         print()
@@ -49,7 +50,7 @@ class HOG:
         i = 0;
         for filename in imageSet:
             i = i + 1
-            hognp = hog.HOGForSingleImage(str(config.IMAGE_FOLDER) + "\\" + filename)
+            hognp = hog.HOGForSingleImage(join(str(config.IMAGE_FOLDER),filename))
             progress(i, number_files)
             storeHogFD.append(hognp.tolist())
         print(len(storeHogFD))
