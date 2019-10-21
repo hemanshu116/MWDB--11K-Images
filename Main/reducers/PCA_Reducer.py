@@ -36,5 +36,5 @@ class PCA_Reducer:
         reconstructed_normalized_feat_desc = self.inv_transform( self.objectLatentsSemantics )
         reconstructed_feat_desc = self.scaler.inverse_transform( reconstructed_normalized_feat_desc )
         reconstruction_err = find_distance_2_vectors(reconstructed_feat_desc, self.featureDescriptor)
-        print('shape: ', np.shape(reconstruction_err), np.average(reconstruction_err))
+        # print('shape: ', np.shape(reconstruction_err), np.average(reconstruction_err))
         self.threshold = np.percentile(reconstruction_err, 85)
