@@ -100,7 +100,7 @@ def plot_output_term_weight_pairs(object_semantics_filename):
 
 
 def find_distance_2_vectors(vector1, vector2):
-    distance.euclidean(vector1, vector2)
+    # distance.euclidean(vector1, vector2)
     return np.linalg.norm(vector1 - vector2, axis=1)
 
 

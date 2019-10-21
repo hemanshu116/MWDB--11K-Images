@@ -25,7 +25,7 @@ class SVD_Reducer:
         return principalDf
 
     def inv_transform(self, data):
-        return self.inv_transform(np.dot(data, np.transpose(self.featureLatentSemantics)))
+        return self.scaler.inverse_transform(np.dot(data, np.transpose(self.featureLatentSemantics)))
 
     def saveImageID(self, imageID):
         self.imageID = imageID
@@ -36,6 +36,6 @@ class SVD_Reducer:
         # reconstructed_normalized_feat_desc = np.dot(Z, (self.featureLatentSemantics))
         reconstructed_feat_desc = self.scaler.inverse_transform(reconstructed_normalized_feat_desc)
         reconstruction_err = find_distance_2_vectors(reconstructed_feat_desc, self.featureDescriptor)
-        print(np.shape(reconstruction_err), np.average(reconstruction_err))
-        self.threshold = np.max(reconstruction_err)
+        # print(np.shape(reconstruction_err), np.average(reconstruction_err))
+        self.threshold = np.percentile(reconstruction_err, 85)
 

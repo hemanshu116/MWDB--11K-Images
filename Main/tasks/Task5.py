@@ -64,7 +64,6 @@ def get_usr_input():
 
 def recompute_reducer_object(feat_desc, feat_redux, label, k):
 
-
     meta_data = pd.read_csv(config.METADATA_FOLDER)
     if label == '1':
         aspectOfHand = 'left'
@@ -85,15 +84,15 @@ def recompute_reducer_object(feat_desc, feat_redux, label, k):
     elif label == '5':
         accessories = '1'
         flabel = 'ACCESS'
-        imageSet = meta_data.loc[(meta_data['accessories'].str.contains(accessories))]
+        imageSet = meta_data.loc[(meta_data['accessories'].astype(str).str.contains(accessories))]
     elif label == '6':
         accessories = '0'
         flabel = 'NOACCESS'
-        imageSet = meta_data.loc[(meta_data['accessories'].str.contains(accessories))]
+        imageSet = meta_data.loc[(meta_data['accessories'].astype(str).str.contains(accessories))]
     elif label == '7':
         gender = 'male'
         flabel = 'MALE'
-        imageSet = meta_data.loc[(meta_data['gender'].str.contains(gender))]
+        imageSet = meta_data.loc[(meta_data['gender'] == gender)]
     elif label == '8':
         gender = 'female'
         flabel = 'FEMALE'
@@ -121,7 +120,8 @@ def recompute_reducer_object(feat_desc, feat_redux, label, k):
         hog = HOG()
         featureVector = hog.HOGFeatureDescriptorForImageSubset(imageSet)
     elif feat_desc == "4":
-        pass
+        sift = SIFT()
+        featureVector = sift.SIFTFeatureDescriptorForImageSubset(imageSet)
     else:
         print("Wrong input")
         exit()
