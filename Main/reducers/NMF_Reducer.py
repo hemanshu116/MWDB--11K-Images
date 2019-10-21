@@ -35,7 +35,7 @@ class NMF_Reducer:
 
 
     def compute_threshold(self):
-        reconstructed_normalized_feat_desc = self.model.inverse_transform(self.objectLatentsSemantics)
+        reconstructed_normalized_feat_desc = self.model.inverse_transform(self.objectLatentSemantics)
         reconstructed_feat_desc = self.scaler.inverse_transform(reconstructed_normalized_feat_desc)
         reconstruction_err = find_distance_2_vectors(reconstructed_feat_desc, self.featureDescriptor)
         print('shape: ', np.shape(reconstruction_err), np.average(reconstruction_err))

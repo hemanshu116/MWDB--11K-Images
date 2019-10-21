@@ -27,13 +27,15 @@ class LDA_Reducer:
         return pd.DataFrame(data=reducedDimensions)
 
     def inv_transform(self, data):
-        return self.scaler.inverse_transform(self.model.inverse_transform(data))
+        reconstructed_normalized_feat_desc = self.model.inverse_transform(data)
+        return self.scaler.inverse_transform(reconstructed_normalized_feat_desc)
 
     def saveImageID(self, imageID):
         self.imageID = imageID
 
     def compute_threshold(self):
-        reconstructed_normalized_feat_desc = self.model.inverse_transform(self.objectLatentSemantics)
+
+        reconstructed_normalized_feat_desc = np.dot(self.objectLatentSemantics, np.transpose(self.featureLatentSemantics))
         reconstructed_feat_desc = self.scaler.inverse_transform(reconstructed_normalized_feat_desc)
         reconstruction_err = find_distance_2_vectors(reconstructed_feat_desc, self.featureDescriptor)
         self.threshold = np.max(reconstruction_err)
