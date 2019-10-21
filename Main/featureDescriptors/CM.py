@@ -71,7 +71,8 @@ class CM:
         for file in os.listdir(str(config.IMAGE_FOLDER)):
             filename = os.fsdecode(file)
             if filename.endswith(".jpg"):
-                hognp = cm.CMForSingleImage(str(config.IMAGE_FOLDER) + "\\" + filename)
+                file_path = os.path.join(str(config.IMAGE_FOLDER), filename)
+                hognp = cm.CMForSingleImage(file_path)
                 storeCmFD.append(hognp.tolist())
                 i = i + 1
                 progress(i, number_files)
@@ -87,7 +88,8 @@ class CM:
         number_files = len(imageSet)
         i = 0
         for filename in imageSet:
-            hognp = cm.CMForSingleImage(str(config.IMAGE_FOLDER) + "\\" + filename)
+            file_path = os.path.join(str(config.IMAGE_FOLDER), filename)
+            hognp = cm.CMForSingleImage(file_path)
             storeCmFD.append(hognp.tolist())
             i = i + 1
             progress(i, number_files)

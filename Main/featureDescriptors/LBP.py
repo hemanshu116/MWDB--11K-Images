@@ -39,14 +39,15 @@ class LBP:
     def LBPFeatureDescriptor(self):
         # Iterating on all the images in the selected folder to calculate HOG FD for each of the images
         storeLbpFD = []
-        lbp = LBP();
+        lbp = LBP()
         files = os.listdir(str(config.IMAGE_FOLDER))  # dir is your directory path
         number_files = len(files)
-        i = 0;
+        i = 0
         for file in os.listdir(str(config.IMAGE_FOLDER)):
             filename = os.fsdecode(file)
             if filename.endswith(".jpg"):
-                hognp = lbp.LBPForSingleImage(str(config.IMAGE_FOLDER) + "\\" + filename)
+                file_path = os.path.join(str(config.IMAGE_FOLDER), filename)
+                hognp = lbp.LBPForSingleImage(file_path)
                 storeLbpFD.append(hognp.tolist())
                 i = i + 1
                 progress(i, number_files)
@@ -62,7 +63,8 @@ class LBP:
         number_files = len(imageSet)
         i = 0
         for filename in imageSet:
-            hognp = lbp.LBPForSingleImage(str(config.IMAGE_FOLDER) + "\\" + filename)
+            file_path = os.path.join(str(config.IMAGE_FOLDER), filename)
+            hognp = lbp.LBPForSingleImage(file_path)
             storeLbpFD.append(hognp.tolist())
             i = i + 1
             progress(i, number_files)

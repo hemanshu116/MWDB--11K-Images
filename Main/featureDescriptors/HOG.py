@@ -26,15 +26,16 @@ class HOG:
     def HOGFeatureDescriptor(self):
         # Iterating on all the images in the selected folder to calculate HOG FD for each of the images
         storeHogFD = []
-        hog = HOG();
+        hog = HOG()
         files = os.listdir(str(config.IMAGE_FOLDER))  # dir is your directory path
         number_files = len(files)
-        i = 0;
+        i = 0
         for file in os.listdir(str(config.IMAGE_FOLDER)):
             filename = os.fsdecode(file)
             if filename.endswith(".jpg"):
                 i = i + 1
-                hognp = hog.HOGForSingleImage(str(config.IMAGE_FOLDER) + "\\" + filename)
+                file_path = os.path.join(str(config.IMAGE_FOLDER), filename)
+                hognp = hog.HOGForSingleImage(file_path)
                 progress(i, number_files)
                 storeHogFD.append(hognp.tolist())
         print()
@@ -47,10 +48,11 @@ class HOG:
         hog = HOG()
         files = os.listdir(str(config.IMAGE_FOLDER))  # dir is your directory path
         number_files = len(imageSet)
-        i = 0;
+        i = 0
         for filename in imageSet:
             i = i + 1
-            hognp = hog.HOGForSingleImage(str(config.IMAGE_FOLDER) + "\\" + filename)
+            file_path = os.path.join(str(config.IMAGE_FOLDER), filename)
+            hognp = hog.HOGForSingleImage(file_path)
             progress(i, number_files)
             storeHogFD.append(hognp.tolist())
         print(len(storeHogFD))

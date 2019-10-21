@@ -14,5 +14,5 @@ METADATA_FOLDER = "E:\Personal Stuff\Projects\ASU\MWDB\Working_Area\Metadata\Han
 
 frTechniqueDict = {"1": "CM", "2": "LBP", "3": "HOG", "4": "SIFT"}
 fdTechniqueDict = {"1": "PCA", "2": "LDA", "3": "SVD", "4": "NMF"}
-flTechniqueDict = {"1": "LEFT", "2": "RIGHT", "3": "DORSAL", "4": "PALMER", "5": "ACCESS",
+flTechniqueDict = {"1": "LEFT", "2": "RIGHT", "3": "DORSAL", "4": "PALMAR", "5": "ACCESS",
                    "6": "NOACCESS", "7": "MALE", "8": "FEMALE"}

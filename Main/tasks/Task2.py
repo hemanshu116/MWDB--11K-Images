@@ -19,8 +19,10 @@ def startTask2():
     imageId = inputTask2[2]
     m = inputTask2[3]
     k = inputTask2[4]
-    with open(config.DATABASE_FOLDER + frTechniqueDict[fdTechnique] + '_' + fdTechniqueDict[frTechnique] + "_" + str(k),
-              "rb") as f:
+
+    file_name = frTechniqueDict[fdTechnique] + '_' + fdTechniqueDict[frTechnique] + "_" + str(k)
+    file_path = os.path.join(config.DATABASE_FOLDER, file_name)
+    with open(file_path, "rb") as f:
         reducerObject = pickle.load(f)
     latentFeatureDict = {}
     data = reducerObject.reduceDimension(reducerObject.featureDescriptor)
@@ -59,16 +61,20 @@ def getUserInputForTask2():
     print("3. Histogram of Oriented Gradients")
     print("4. SIFT")
     fdInput = input()
+
     print("Please select the feature reduction technique")
     print("1. PCA")
     print("2. LDA")
     print("3. SVD")
     print("4. NMF")
     frInput = input()
+
     print("Please enter K number of latent semantics")
     k = input()
-    fileExists = os.path.exists(
-        DATABASE_FOLDER + "\\" + frTechniqueDict.get(fdInput) + "_" + fdTechniqueDict.get(frInput) + "_" + str(k))
+
+    file_name = frTechniqueDict.get(fdInput) + "_" + fdTechniqueDict.get(frInput) + "_" + str(k)
+    file_path = os.path.join(DATABASE_FOLDER, file_name)
+    fileExists = os.path.exists(file_path)
     if fileExists:
         print("Database found, still want to recompute? (Y/N)")
         shouldRecompute = input()
@@ -85,4 +91,4 @@ def getUserInputForTask2():
 
 
 # Uncomment to run task independently
-startTask2()
+# startTask2()

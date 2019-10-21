@@ -78,7 +78,7 @@ def startTask3(inputs=[], shouldGetInputs=True):
         exit()
 
 
-    i = 0;
+    i = 0
     newTemp = []
     for file in os.listdir(str(config.IMAGE_FOLDER)):
         filename = os.fsdecode(file)

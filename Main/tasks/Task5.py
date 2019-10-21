@@ -1,6 +1,8 @@
 import os
+import time
 import pandas as pd
 import numpy as np
+import pickle
 
 import Main.config as config
 from Main.helper import load_pickle, find_distance_2_vectors
@@ -21,11 +23,15 @@ def startTask5():
     feat_desc_ch = inps['feature']
     feat_redux_ch = inps['reduction']
     label_ch = inps['label']
-    k = inps['k']
+    k = int(inps['k'])
 
     # Fetch model trained for the corresponding feature model, redux technik, label and k
-    json_file = frTechniqueDict.get(feat_desc_ch) + "_" + fdTechniqueDict.get(feat_redux_ch) + "_" + flTechniqueDict.get(label_ch) + "_" + k
-    pickle_file_path = os.path.join(config.DATABASE_FOLDER, json_file)
+    file_name = frTechniqueDict.get(feat_desc_ch) + "_" + fdTechniqueDict.get(feat_redux_ch) + "_" + flTechniqueDict.get(label_ch) + "_" + str(k)
+    pickle_file_path = os.path.join(config.DATABASE_FOLDER, file_name)
+    # print('File Name: ', file_name, '\nFull Path: ', pickle_file_path)
+    if (not (os.path.exists(pickle_file_path))):
+        recompute_reducer_object((feat_desc_ch), (feat_redux_ch), (label_ch), (k))
+        time.sleep(5)
     reducer_object = load_pickle(pickle_file_path)
 
     # get unlabelled img threshold
@@ -33,9 +39,9 @@ def startTask5():
     unseen_img_threshold = get_unseen_img_threshold(unseen_img_desc, reducer_object)
 
     if (unseen_img_threshold > reducer_object.threshold):
-        print('Not part of this label')
+        print('Not a ' + flTechniqueDict.get(label_ch) + ' image')
     else:
-        print('Part of the label')
+        print('It is a ' + flTechniqueDict.get(label_ch) + ' image')
 
 
 def get_usr_input():
@@ -55,7 +61,89 @@ def get_usr_input():
 
     return {'feature': feat_ch, 'reduction': redux_ch, 'k': k, 'label': label_ch}
 
-# Unused
+
+def recompute_reducer_object(feat_desc, feat_redux, label, k):
+
+
+    meta_data = pd.read_csv(config.METADATA_FOLDER)
+    if label == '1':
+        aspectOfHand = 'left'
+        flabel = 'LEFT'
+        imageSet = meta_data.loc[(meta_data['aspectOfHand'].str.contains(aspectOfHand))]
+    elif label == '2':
+        aspectOfHand = 'right'
+        flabel = 'RIGHT'
+        imageSet = meta_data.loc[(meta_data['aspectOfHand'].str.contains(aspectOfHand))]
+    elif label == '3':
+        aspectOfHand = 'dorsal'
+        flabel = 'DORSAL'
+        imageSet = meta_data.loc[(meta_data['aspectOfHand'].str.contains(aspectOfHand))]
+    elif label == '4':
+        aspectOfHand = 'palmar'
+        flabel = 'PALMAR'
+        imageSet = meta_data.loc[(meta_data['aspectOfHand'].str.contains(aspectOfHand))]
+    elif label == '5':
+        accessories = '1'
+        flabel = 'ACCESS'
+        imageSet = meta_data.loc[(meta_data['accessories'].str.contains(accessories))]
+    elif label == '6':
+        accessories = '0'
+        flabel = 'NOACCESS'
+        imageSet = meta_data.loc[(meta_data['accessories'].str.contains(accessories))]
+    elif label == '7':
+        gender = 'male'
+        flabel = 'MALE'
+        imageSet = meta_data.loc[(meta_data['gender'].str.contains(gender))]
+    elif label == '8':
+        gender = 'female'
+        flabel = 'FEMALE'
+        imageSet = meta_data.loc[(meta_data['gender'].str.contains(gender))]
+    else:
+        print("Wrong input")
+        exit()
+
+    i = 0
+    newTemp = []
+    for file in os.listdir(str(config.IMAGE_FOLDER)):
+        filename = os.fsdecode(file)
+        if filename.endswith(".jpg") and (filename in imageSet.imageName.values):
+            newTemp.append(filename)
+
+    imageSet = newTemp
+
+    if feat_desc == "1":
+        cm = CM()
+        featureVector = cm.CMFeatureDescriptorForImageSubset(imageSet)
+    elif feat_desc == "2":
+        lbp = LBP()
+        featureVector = lbp.LBPFeatureDescriptorForImageSubset(imageSet)
+    elif feat_desc == "3":
+        hog = HOG()
+        featureVector = hog.HOGFeatureDescriptorForImageSubset(imageSet)
+    elif feat_desc == "4":
+        pass
+    else:
+        print("Wrong input")
+        exit()
+
+    if feat_redux == "1":
+        fr = PCA_Reducer(featureVector, k)
+    if feat_redux == "2":
+        fr = LDA_Reducer(featureVector, k)
+    if feat_redux == "3":
+        fr = SVD_Reducer(featureVector, k)
+    if feat_redux == "4":
+        fr = NMF_Reducer(featureVector, k)
+
+    fr.saveImageID(imageSet)
+    fr.compute_threshold()
+
+    file_name = frTechniqueDict[feat_desc] + '_' + fdTechniqueDict[feat_redux] + '_' + flabel + '_' + str(k)
+    file_path = os.path.join(config.DATABASE_FOLDER, file_name)
+    filehandler = open(file_path, 'wb')
+    pickle.dump(fr, filehandler)
+
+
 def get_latent_semantics(feat_desc_ch, feat_redux_ch, label_ch, k):
     # Get subset of imgs corresponding to the label
     img_subset = get_label_match_imgs(label_ch)
@@ -79,7 +167,6 @@ def get_latent_semantics(feat_desc_ch, feat_redux_ch, label_ch, k):
 # Unused
 def get_label_match_imgs(label_ch):
     meta_data = pd.read_csv(config.METADATA_FOLDER)  # Opens csv to dataframe
-
 
     if (int(label_ch) == 1):
         return meta_data.loc[meta_data['aspectOfHand'].str.contains('left')]

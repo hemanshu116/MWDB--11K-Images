@@ -3,6 +3,7 @@ import pickle
 import os
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
+from scipy.spatial import distance
 
 
 def progress(count, total):
@@ -24,8 +25,10 @@ def normalize_score(data):
     scaled_values = scaler.fit_transform(data_array)
     return pd.Series(scaled_values.reshape(len(scaled_values)))
 
+
 def find_distance_2_vectors(vector1, vector2):
-    return np.linalg.norm(vector1 - vector2)
+    distance.euclidean(vector1, vector2)
+    return np.linalg.norm(vector1 - vector2, axis=1)
 
 
 def save_pickle(pickle_file_path, obj):

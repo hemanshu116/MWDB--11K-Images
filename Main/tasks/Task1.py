@@ -66,10 +66,8 @@ def startTask1(inputs=[], shouldGetInputs=True):
     if int(frTechnique) == 2:
         fr = LDA_Reducer(featureVector, k)
     if int(frTechnique) == 3:
-
         fr = SVD_Reducer(featureVector, k)
     if int(frTechnique) == 4:
-
         fr = NMF_Reducer(featureVector, k)
 
     # save for visualization
@@ -80,7 +78,9 @@ def startTask1(inputs=[], shouldGetInputs=True):
             store.append(filename)
     # plot_term_weight_pairs(fr.objectLatentsSemantics, store)
 
-    filehandler = open(config.DATABASE_FOLDER + frTechniqueDict[fdTechnique] + '_' + fdTechniqueDict[frTechnique] + "_" + str(k), 'wb')
+    file_name = frTechniqueDict[fdTechnique] + '_' + fdTechniqueDict[frTechnique] + "_" + str(k)
+    file_path = os.path.join(config.DATABASE_FOLDER, file_name)
+    filehandler = open(file_path, 'wb')
     pickle.dump(fr, filehandler)
 
 
