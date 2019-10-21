@@ -1,5 +1,6 @@
 import json
 import os
+from os.path import join
 
 import pandas as pd
 import pickle
@@ -11,25 +12,13 @@ from Main.config import frTechniqueDict, fdTechniqueDict
 from Main.featureDescriptors.CM import CM
 from Main.featureDescriptors.HOG import HOG
 from Main.featureDescriptors.LBP import LBP
+from Main.featureDescriptors.SIFT import SIFT
+from Main.helper import plot_output_term_weight_pairs
 from Main.reducers.LDA_Reducer import LDA_Reducer
 from Main.reducers.NMF_Reducer import NMF_Reducer
 from Main.reducers.PCA_Reducer import PCA_Reducer
 from Main.reducers.SVD_Reducer import SVD_Reducer
-
-def saveToFile(fr, frType, fdType, flabel, k):
-    store = {}
-    i = 0
-    for file in os.listdir(str(config.IMAGE_FOLDER)):
-        filename = os.fsdecode(file)
-        if filename.endswith(".jpg"):
-            store[i] = filename
-            i = i + 1
-
-    fr.rename(index=store, inplace=True)
-    # print(json.loads(fr.to_json()))
-    json_file = frTechniqueDict[frType] + '_' + fdTechniqueDict[fdType] + '_' + flabel + '_' + k + '.json'
-    with open(os.path.join(config.DATABASE_FOLDER, json_file), 'w', encoding='utf-8') as f:
-        json.dump(json.loads(fr.to_json(orient='index')), f, ensure_ascii=True, indent=4)
+from Main.tasks.Task1 import output_term_weight_pairs
 
 
 def startTask3(inputs=[], shouldGetInputs=True):
@@ -60,15 +49,15 @@ def startTask3(inputs=[], shouldGetInputs=True):
     elif flTechnique == '5':
         accessories = '1'
         flabel = 'ACCESS'
-        imageSet = meta_data.loc[(meta_data['accessories'].str.contains(accessories))]
+        imageSet = meta_data.loc[(meta_data['accessories'].astype(str).str.contains(accessories))]
     elif flTechnique == '6':
         accessories = '0'
         flabel = 'NOACCESS'
-        imageSet = meta_data.loc[(meta_data['accessories'].str.contains(accessories))]
+        imageSet = meta_data.loc[(meta_data['accessories'].astype(str).str.contains(accessories))]
     elif flTechnique == '7':
         gender = 'male'
         flabel = 'MALE'
-        imageSet = meta_data.loc[(meta_data['gender'].str.contains(gender))]
+        imageSet = meta_data.loc[meta_data['gender'] == gender]
     elif flTechnique == '8':
         gender = 'female'
         flabel = 'FEMALE'
@@ -86,7 +75,6 @@ def startTask3(inputs=[], shouldGetInputs=True):
             newTemp.append(filename)
 
     imageSet = newTemp
-    # print(imageSet)
 
     if fdTechnique == "1":
         cm = CM()
@@ -101,7 +89,8 @@ def startTask3(inputs=[], shouldGetInputs=True):
         featureVector = hog.HOGFeatureDescriptorForImageSubset(imageSet)
 
     elif fdTechnique == "4":
-        pass
+        sift = SIFT()
+        featureVector = sift.SIFTFeatureDescriptorForImageSubset(imageSet)
     else:
         print("Wrong input")
         exit()
@@ -118,10 +107,18 @@ def startTask3(inputs=[], shouldGetInputs=True):
     fr.saveImageID(imageSet)
     fr.compute_threshold()
 
-    # save for visualization pending
+    output_filename = frTechniqueDict[fdTechnique] + '_' + fdTechniqueDict[frTechnique] + '_' + flabel + '_' + str(k)
 
-    file_path = os.path.join(config.DATABASE_FOLDER, frTechniqueDict[fdTechnique] + '_' + fdTechniqueDict[frTechnique] + '_' + flabel + '_' + str(k))
-    filehandler = open(file_path, 'wb')
+    output_term_weight_pairs(fr.objectLatentSemantics, newTemp, join(config.DATABASE_FOLDER , 'Object_Semantics_' + output_filename))
+    print(fr.featureLatentSemantics.shape)
+    output_term_weight_pairs(fr.featureLatentSemantics,
+                             ['f' + str(x) for x in range(0, len(fr.featureLatentSemantics))],
+                             join(config.DATABASE_FOLDER, 'Feature_Semantics_' + output_filename))
+
+    filehandler = open(join(config.DATABASE_FOLDER , output_filename), 'wb')
+    print("Term weight pairs are successfully stored")
+    print("progress for visualization..")
+    plot_output_term_weight_pairs(output_filename)
     pickle.dump(fr, filehandler)
 
 
@@ -158,4 +155,5 @@ def getUserInputForTask1():
 
 
 # Uncomment to run task independently
-# startTask3()
+if __name__ == "__main__":
+    startTask3()

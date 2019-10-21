@@ -15,12 +15,12 @@ class PCA_Reducer:
         self.scaler = StandardScaler()
         self.scaler.fit(self.featureDescriptor)
         self.normalizedFeatureDescriptor = self.scaler.transform(self.featureDescriptor)
-        if min(self.normalizedFeatureDescriptor.shape) <= k:
+        if min(self.normalizedFeatureDescriptor.shape) < k:
             print("Cannot compute on PCA on components higher than min of", self.normalizedFeatureDescriptor.shape)
             exit()
         self.pca.fit(self.normalizedFeatureDescriptor)
         self.featureLatentSemantics = self.pca.components_.T
-        self.objectLatentsSemantics = self.pca.transform(featureDescriptor)
+        self.objectLatentSemantics = self.pca.transform(featureDescriptor)
 
     def reduceDimension(self, data):
         reducedDimesnions = self.pca.transform(self.scaler.transform(data))

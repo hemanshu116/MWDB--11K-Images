@@ -1,4 +1,5 @@
 import os
+from os.path import join
 
 import numpy as np
 import sys
@@ -46,8 +47,7 @@ class LBP:
         for file in os.listdir(str(config.IMAGE_FOLDER)):
             filename = os.fsdecode(file)
             if filename.endswith(".jpg"):
-                file_path = os.path.join(str(config.IMAGE_FOLDER), filename)
-                hognp = lbp.LBPForSingleImage(file_path)
+                hognp = lbp.LBPForSingleImage(join(str(config.IMAGE_FOLDER),filename))
                 storeLbpFD.append(hognp.tolist())
                 i = i + 1
                 progress(i, number_files)
@@ -59,12 +59,10 @@ class LBP:
         # Iterating on all the images in the selected folder to calculate HOG FD for each of the images
         storeLbpFD = []
         lbp = LBP()
-        files = os.listdir(str(config.IMAGE_FOLDER))  # dir is your directory path
         number_files = len(imageSet)
         i = 0
         for filename in imageSet:
-            file_path = os.path.join(str(config.IMAGE_FOLDER), filename)
-            hognp = lbp.LBPForSingleImage(file_path)
+            hognp = lbp.LBPForSingleImage(join(str(config.IMAGE_FOLDER),filename))
             storeLbpFD.append(hognp.tolist())
             i = i + 1
             progress(i, number_files)

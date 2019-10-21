@@ -13,16 +13,12 @@ class NMF_Reducer:
         self.k = k
         self.scaler = MinMaxScaler()
         self.scaler.fit(featureDescriptor)
-        if min(len(featureDescriptor[0]), len(featureDescriptor)) <= k:
-            print()
-            print("Cannot compute on NMF on components higher than min of [", len(featureDescriptor[0]), ",",
-                  len(featureDescriptor)," ]")
-            exit()
+        self.imageID = None
         self.model = NMF(self.k, init='random', random_state=0)
         W = self.model.fit_transform(self.scaler.transform(self.featureDescriptor))
         H = self.model.components_
         self.featureLatentSemantics = H[:self.k, :].T
-        self.objectLatentsSemantics = W[:, :self.k]
+        self.objectLatentSemantics = W[:, :self.k]
 
     def reduceDimension(self, data):
         abs_data = np.abs(self.scaler.transform(data))

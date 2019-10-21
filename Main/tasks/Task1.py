@@ -1,14 +1,17 @@
 import json
 import os
 import pickle
-import pandas as pd
+from os.path import join
 
+import pandas as pd
 
 import Main.config as config
 from Main.config import frTechniqueDict, fdTechniqueDict
 from Main.featureDescriptors.CM import CM
 from Main.featureDescriptors.HOG import HOG
 from Main.featureDescriptors.LBP import LBP
+from Main.featureDescriptors.SIFT import SIFT
+from Main.helper import plot_output_term_weight_pairs
 from Main.reducers.LDA_Reducer import LDA_Reducer
 from Main.reducers.NMF_Reducer import NMF_Reducer
 from Main.reducers.PCA_Reducer import PCA_Reducer
@@ -27,7 +30,7 @@ def saveToFile(fr, frType, fdType):
     fr.rename(index=store, inplace=True)
     # print(json.loads(fr.to_json()))
     json_file = os.path.join(config.DATABASE_FOLDER, frTechniqueDict[frType] + '_' + fdTechniqueDict[fdType] + '.json')
-    with open( json_file, 'w', encoding='utf-8') as f:
+    with open(json_file, 'w', encoding='utf-8') as f:
         json.dump(json.loads(fr.to_json(orient='index')), f, ensure_ascii=True, indent=4)
 
 
@@ -39,7 +42,6 @@ def startTask1(inputs=[], shouldGetInputs=True):
     k = inputs[2]
 
     featureVector = []
-
     if int(fdTechnique) == 1:
         cm = CM()
         featureVector = cm.CMFeatureDescriptor()
@@ -53,7 +55,8 @@ def startTask1(inputs=[], shouldGetInputs=True):
         featureVector = hog.HOGFeatureDescriptor()
         # return featureVector
     elif int(fdTechnique) == 4:
-        pass
+        sift = SIFT()
+        featureVector = sift.SIFTFeatureDescriptor()
     else:
         print("Wrong input")
         exit()
@@ -76,11 +79,21 @@ def startTask1(inputs=[], shouldGetInputs=True):
         filename = os.fsdecode(file)
         if filename.endswith(".jpg"):
             store.append(filename)
-    # plot_term_weight_pairs(fr.objectLatentsSemantics, store)
 
-    file_name = frTechniqueDict[fdTechnique] + '_' + fdTechniqueDict[frTechnique] + "_" + str(k)
-    file_path = os.path.join(config.DATABASE_FOLDER, file_name)
-    filehandler = open(file_path, 'wb')
+    output_filename = frTechniqueDict[fdTechnique] + '_' + fdTechniqueDict[frTechnique] + "_" + str(k)
+
+    output_term_weight_pairs(fr.objectLatentSemantics, store,
+                             join(config.DATABASE_FOLDER, 'Object_Semantics_' + output_filename))
+
+    print(fr.featureLatentSemantics.shape)
+    output_term_weight_pairs(fr.featureLatentSemantics,
+                             ['f' + str(x) for x in range(0, len(fr.featureLatentSemantics))],
+                             join(config.DATABASE_FOLDER, 'Feature_Semantics_' + output_filename))
+
+    filehandler = open(join(config.DATABASE_FOLDER, output_filename), 'wb')
+    print("Term weight pairs are successfully stored")
+    print("progress for visualization..")
+    plot_output_term_weight_pairs(output_filename)
     pickle.dump(fr, filehandler)
 
 
@@ -102,20 +115,19 @@ def getUserInputForTask1():
     return [fdInput, frInput, k]
 
 
-def plot_term_weight_pairs(components, col_index):
-    components_df = pd.DataFrame(components)
-    print(components.shape)
-    components_df['index'] = col_index
-    components_df.set_index('index')
-    print(components)
+def output_term_weight_pairs(components, col_index, filepath):
+    components_df = pd.DataFrame(components).T
+    # print(components.shape)
+    components_df.columns = col_index
     output = {}
-    num_components = len(components_df.columns)
-    for i in range(0, num_components):
-        sorted_vals = components_df.iloc[:, i].sort_values(ascending=False)
+    num_components = len(components_df)
+    for i in range(1, num_components + 1):
+        sorted_vals = components_df.iloc[i - 1, :].sort_values(ascending=False)
         output[i] = (list(zip(sorted_vals, sorted_vals.index)))
-    fp = open(config.DATABASE_FOLDER + 'test.json', 'w')
+    fp = open(filepath + '.json', 'w+')
     json.dump(output, fp)
 
 
 # Uncomment to run task independently
-#startTask1()
+if __name__ == "__main__":
+    startTask1()

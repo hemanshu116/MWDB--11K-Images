@@ -1,4 +1,5 @@
 import os
+from os.path import join
 
 import cv2
 from scipy.stats.mstats import skew
@@ -71,8 +72,7 @@ class CM:
         for file in os.listdir(str(config.IMAGE_FOLDER)):
             filename = os.fsdecode(file)
             if filename.endswith(".jpg"):
-                file_path = os.path.join(str(config.IMAGE_FOLDER), filename)
-                hognp = cm.CMForSingleImage(file_path)
+                hognp = cm.CMForSingleImage(join(str(config.IMAGE_FOLDER),filename))
                 storeCmFD.append(hognp.tolist())
                 i = i + 1
                 progress(i, number_files)
@@ -84,12 +84,10 @@ class CM:
         # Iterating on all the images in the selected folder to calculate HOG FD for each of the images in the subset
         storeCmFD = []
         cm = CM()
-        files = os.listdir(str(config.IMAGE_FOLDER))  # dir is your directory path
         number_files = len(imageSet)
         i = 0
         for filename in imageSet:
-            file_path = os.path.join(str(config.IMAGE_FOLDER), filename)
-            hognp = cm.CMForSingleImage(file_path)
+            hognp = cm.CMForSingleImage(join(str(config.IMAGE_FOLDER),filename))
             storeCmFD.append(hognp.tolist())
             i = i + 1
             progress(i, number_files)

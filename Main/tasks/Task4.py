@@ -1,5 +1,6 @@
 import json
 import os
+from os.path import join
 
 import numpy as np
 import pickle
@@ -7,7 +8,7 @@ import pickle
 import Main.config as config
 from Main.config import frTechniqueDict, fdTechniqueDict, flTechniqueDict
 from Main.tasks.Task3 import startTask3
-from Main.helper import findDistance
+from Main.helper import findDistance, normalize_score, printMatch
 
 
 def startTask4():
@@ -32,7 +33,8 @@ def startTask4():
 
     selectedImage = latentFeatureDict[imageId]
     distanceList = findDistance(selectedImage, latentFeatureDict)
-    printMatch(distanceList, m)
+    printMatch(distanceList, m, frTechniqueDict.get(fdTechnique) + "_" + fdTechniqueDict.get(frTechnique) + "_"
+              + flTechniqueDict.get(flTechnique) + "_" + k)
 
 
 def getUserInputForTask4():
@@ -60,8 +62,8 @@ def getUserInputForTask4():
     flInput = input()
     print("Please enter K number of latent semantics")
     k = input()
-    fileExists = os.path.exists(config.DATABASE_FOLDER + frTechniqueDict.get(fdInput) + "_"
-                                + fdTechniqueDict.get(frInput) + "_" + flTechniqueDict.get(flInput) + "_" + k)
+    fileExists = os.path.exists(join(config.DATABASE_FOLDER , frTechniqueDict.get(fdInput) + "_"
+                                + fdTechniqueDict.get(frInput) + "_" + flTechniqueDict.get(flInput) + "_" + k))
     if fileExists:
         print("Database found, still want to recompute? (Y/N)")
         shouldRecompute = input()
@@ -71,8 +73,6 @@ def getUserInputForTask4():
             startTask3([fdInput, flInput, frInput, k], False)
     else:
         print("Database was not found, Please enter k for computing")
-        print("Please enter K number of latent semantics")
-        k = input()
         startTask3([fdInput, flInput, frInput, k], False)
     print("Enter the image path for matching")
     imagePath = input()
@@ -81,16 +81,6 @@ def getUserInputForTask4():
     return [fdInput, flInput, frInput, imagePath, m, k]
 
 
-def printMatch(finalList, k):
-    sortList = sorted(finalList.items(), key=lambda x: x[1])
-    i = 0
-    for keyValue in sortList:
-        if i == int(k):
-            break
-        image, score = keyValue
-        print(image + " : " + str(100.0 - score) + " % match")
-        i = i + 1
-
-
 # Uncomment to run task independently
-# startTask4()
+if __name__ == "__main__":
+    startTask4()

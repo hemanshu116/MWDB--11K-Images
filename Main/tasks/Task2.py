@@ -1,6 +1,7 @@
 import json
 import os
 import pickle
+from os.path import join
 from shutil import copyfile
 
 import numpy as np
@@ -8,7 +9,7 @@ import pandas as pd
 
 from Main import config
 from Main.config import DATABASE_FOLDER, frTechniqueDict, fdTechniqueDict
-from Main.helper import findDistance, normalize_score
+from Main.helper import findDistance, normalize_score, printMatch
 from Main.tasks.Task1 import startTask1
 
 
@@ -19,10 +20,8 @@ def startTask2():
     imageId = inputTask2[2]
     m = inputTask2[3]
     k = inputTask2[4]
-
-    file_name = frTechniqueDict[fdTechnique] + '_' + fdTechniqueDict[frTechnique] + "_" + str(k)
-    file_path = os.path.join(config.DATABASE_FOLDER, file_name)
-    with open(file_path, "rb") as f:
+    with open(join(config.DATABASE_FOLDER + frTechniqueDict[fdTechnique] + '_' + fdTechniqueDict[frTechnique] + "_" + str(k)),
+              "rb") as f:
         reducerObject = pickle.load(f)
     latentFeatureDict = {}
     data = reducerObject.reduceDimension(reducerObject.featureDescriptor)
@@ -35,23 +34,7 @@ def startTask2():
 
     selectedImage = latentFeatureDict[imageId]
     distanceList = findDistance(selectedImage, latentFeatureDict)
-    printMatch(distanceList, m)
-
-
-def printMatch(finalList, k):
-    sortList = sorted(finalList.items(), key=lambda x: x[1])
-    i = 0
-    forNormalize = []
-    for keyValue in sortList:
-        if i == int(k):
-            break
-        image, score = keyValue
-        forNormalize.append(score)
-        # print(image + " : " + str(100.0 - score) + " % match")
-        # copyfile(config.IMAGE_FOLDER + "\\" + image, config.VISUALISE_FOLDER + image)
-        i = i + 1
-
-    print(list(normalize_score(forNormalize)))
+    printMatch(distanceList, m, frTechniqueDict[fdTechnique] + '_' + fdTechniqueDict[frTechnique] + "_" + str(k))
 
 
 def getUserInputForTask2():
@@ -71,10 +54,8 @@ def getUserInputForTask2():
 
     print("Please enter K number of latent semantics")
     k = input()
-
-    file_name = frTechniqueDict.get(fdInput) + "_" + fdTechniqueDict.get(frInput) + "_" + str(k)
-    file_path = os.path.join(DATABASE_FOLDER, file_name)
-    fileExists = os.path.exists(file_path)
+    fileExists = os.path.exists(
+        join(DATABASE_FOLDER , frTechniqueDict.get(fdInput) + "_" + fdTechniqueDict.get(frInput) + "_" + str(k)))
     if fileExists:
         print("Database found, still want to recompute? (Y/N)")
         shouldRecompute = input()
@@ -91,4 +72,5 @@ def getUserInputForTask2():
 
 
 # Uncomment to run task independently
-# startTask2()
+if __name__ == "__main__":
+    startTask2()

@@ -1,4 +1,5 @@
 import os
+from os.path import join
 
 from skimage import io
 from skimage.feature import hog
@@ -34,8 +35,7 @@ class HOG:
             filename = os.fsdecode(file)
             if filename.endswith(".jpg"):
                 i = i + 1
-                file_path = os.path.join(str(config.IMAGE_FOLDER), filename)
-                hognp = hog.HOGForSingleImage(file_path)
+                hognp = hog.HOGForSingleImage(join(str(config.IMAGE_FOLDER),filename))
                 progress(i, number_files)
                 storeHogFD.append(hognp.tolist())
         print()
@@ -46,13 +46,11 @@ class HOG:
         # Iterating on all the images in the selected folder to calculate HOG FD for each of the images in the subset
         storeHogFD = []
         hog = HOG()
-        files = os.listdir(str(config.IMAGE_FOLDER))  # dir is your directory path
         number_files = len(imageSet)
         i = 0
         for filename in imageSet:
             i = i + 1
-            file_path = os.path.join(str(config.IMAGE_FOLDER), filename)
-            hognp = hog.HOGForSingleImage(file_path)
+            hognp = hog.HOGForSingleImage(join(str(config.IMAGE_FOLDER),filename))
             progress(i, number_files)
             storeHogFD.append(hognp.tolist())
         print(len(storeHogFD))
