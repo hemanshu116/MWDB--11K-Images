@@ -1,5 +1,6 @@
 import json
 import os
+from os.path import join
 
 import pandas as pd
 import pickle
@@ -12,6 +13,7 @@ from Main.featureDescriptors.CM import CM
 from Main.featureDescriptors.HOG import HOG
 from Main.featureDescriptors.LBP import LBP
 from Main.featureDescriptors.SIFT import SIFT
+from Main.helper import plot_output_term_weight_pairs
 from Main.reducers.LDA_Reducer import LDA_Reducer
 from Main.reducers.NMF_Reducer import NMF_Reducer
 from Main.reducers.PCA_Reducer import PCA_Reducer
@@ -47,15 +49,15 @@ def startTask3(inputs=[], shouldGetInputs=True):
     elif flTechnique == '5':
         accessories = '1'
         flabel = 'ACCESS'
-        imageSet = meta_data.loc[(meta_data['accessories'].str.contains(accessories))]
+        imageSet = meta_data.loc[(meta_data['accessories'].astype(str).str.contains(accessories))]
     elif flTechnique == '6':
         accessories = '0'
         flabel = 'NOACCESS'
-        imageSet = meta_data.loc[(meta_data['accessories'].str.contains(accessories))]
+        imageSet = meta_data.loc[(meta_data['accessories'].astype(str).str.contains(accessories))]
     elif flTechnique == '7':
         gender = 'male'
         flabel = 'MALE'
-        imageSet = meta_data.loc[(meta_data['gender'].str.contains(gender))]
+        imageSet = meta_data.loc[meta_data['gender'] == gender]
     elif flTechnique == '8':
         gender = 'female'
         flabel = 'FEMALE'
@@ -106,9 +108,16 @@ def startTask3(inputs=[], shouldGetInputs=True):
 
     output_filename = frTechniqueDict[fdTechnique] + '_' + fdTechniqueDict[frTechnique] + '_' + flabel + '_' + str(k)
 
-    output_term_weight_pairs(fr.objectLatentSemantics, newTemp, config.DATABASE_FOLDER + 'Object_Semantics_' + output_filename)
+    output_term_weight_pairs(fr.objectLatentSemantics, newTemp, join(config.DATABASE_FOLDER , 'Object_Semantics_' + output_filename))
+    print(fr.featureLatentSemantics.shape)
+    output_term_weight_pairs(fr.featureLatentSemantics,
+                             ['f' + str(x) for x in range(0, len(fr.featureLatentSemantics))],
+                             join(config.DATABASE_FOLDER, 'Feature_Semantics_' + output_filename))
 
-    filehandler = open(config.DATABASE_FOLDER + output_filename, 'wb')
+    filehandler = open(join(config.DATABASE_FOLDER , output_filename), 'wb')
+    print("Term weight pairs are successfully stored")
+    print("progress for visualization..")
+    plot_output_term_weight_pairs(output_filename)
     pickle.dump(fr, filehandler)
 
 
