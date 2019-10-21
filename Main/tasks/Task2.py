@@ -20,7 +20,7 @@ def startTask2():
     imageId = inputTask2[2]
     m = inputTask2[3]
     k = inputTask2[4]
-    with open(join(config.DATABASE_FOLDER + frTechniqueDict[fdTechnique] + '_' + fdTechniqueDict[frTechnique] + "_" + str(k)),
+    with open(join(config.DATABASE_FOLDER , frTechniqueDict[fdTechnique] + '_' + fdTechniqueDict[frTechnique] + "_" + str(k)),
               "rb") as f:
         reducerObject = pickle.load(f)
     latentFeatureDict = {}

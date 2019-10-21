@@ -42,6 +42,12 @@ def startTask1(inputs=[], shouldGetInputs=True):
     k = inputs[2]
 
     featureVector = []
+    fileExists = os.path.exists(join(config.DATABASE_FOLDER, frTechniqueDict.get(fdTechnique) + "_"
+                                     + fdTechniqueDict.get(frTechnique)+ "_" + k))
+    if(fileExists):
+        output_filename = frTechniqueDict[fdTechnique] + '_' + fdTechniqueDict[frTechnique] + "_" + str(k)
+        plot_output_term_weight_pairs(output_filename)
+        exit()
     if int(fdTechnique) == 1:
         cm = CM()
         featureVector = cm.CMFeatureDescriptor()
@@ -122,7 +128,10 @@ def output_term_weight_pairs(components, col_index, filepath):
     output = {}
     num_components = len(components_df)
     for i in range(1, num_components + 1):
+        if i > 3:
+            break
         sorted_vals = components_df.iloc[i - 1, :].sort_values(ascending=False)
+        sorted_vals = sorted_vals.head(5)
         output[i] = (list(zip(sorted_vals, sorted_vals.index)))
     fp = open(filepath + '.json', 'w+')
     json.dump(output, fp)

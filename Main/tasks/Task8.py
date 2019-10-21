@@ -95,7 +95,9 @@ def startTask8():
     display_term_weight_pairs(H, image_name_df.columns[1:], 'H')
     display_term_weight_pairs(W.T, image_name_df[0], 'W')
     print("Top k latent semantics for image and metadata space are stored successfully in the database folder")
+    print()
     print("Path for metadata:",join(config.DATABASE_FOLDER, 'task8_metadata_' + str(k) + '.json'))
+    print()
     print("Path for image:", join(config.DATABASE_FOLDER, 'task8_image_' + str(k) + '.json'))
 
 
