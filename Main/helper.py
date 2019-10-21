@@ -58,8 +58,8 @@ def plot(num_images, imageScores, outputFolderParams, forTask1and3=True, finalIm
     # loop over the results
     imageScores = list(imageScores.items())
     if forTask1and3:
-        columns = 15
-        fig = plt.figure(figsize=(70, 70))
+        columns = 3
+        fig = plt.figure(figsize=(20, 20))
     else:
         columns = 3
         fig = plt.figure(figsize=(20, 20))
@@ -90,12 +90,16 @@ def plot_output_term_weight_pairs(object_semantics_filename):
         data = json.load(f)
     k = 1
     for key, value in data.items():
+        if k > 3:
+            break
         dictionaryOfImageAndSematic = {}
         for i in range(len(value)):
+            if i > 8:
+                break
             semantic, imagename = tuple(value[i])
             dictionaryOfImageAndSematic[imagename] = semantic
         progress(k,len(data.items()))
-        plot(len(value), dictionaryOfImageAndSematic, filename, finalImageName=k)
+        plot(len(dictionaryOfImageAndSematic), dictionaryOfImageAndSematic, filename, finalImageName=k)
         k = k + 1
 
 
