@@ -50,7 +50,7 @@ def create_feature_df():
 
 
 def generate_similarity(all_featureVector_df):
-    reduced_features_df = apply_pca(all_featureVector_df[all_featureVector_df.columns[9:]], 30)
+    reduced_features_df = apply_pca(all_featureVector_df[all_featureVector_df.columns[9:]], 90)
     final_feature_df = pd.concat([all_featureVector_df[all_featureVector_df.columns[0:9]].reset_index(drop=True)
                                      , pd.DataFrame(reduced_features_df)], axis=1)
     sim_df_cos = compute_subject_subject_similarity(final_feature_df, cosine_similarity)

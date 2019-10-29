@@ -128,10 +128,7 @@ def output_term_weight_pairs(components, col_index, filepath):
     output = {}
     num_components = len(components_df)
     for i in range(1, num_components + 1):
-        if i > 3:
-            break
         sorted_vals = components_df.iloc[i - 1, :].sort_values(ascending=False)
-        sorted_vals = sorted_vals.head(5)
         output[i] = (list(zip(sorted_vals, sorted_vals.index)))
     fp = open(filepath + '.json', 'w+')
     json.dump(output, fp)
