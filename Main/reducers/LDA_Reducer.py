@@ -21,13 +21,19 @@ class LDA_Reducer:
         H = self.model.components_
         self.featureLatentSemantics = H[:self.k, :].T
         self.objectLatentSemantics = W[:, :self.k]
+        self.SIFT_info = None
+
+    def set_SIFT_info(self, obj):
+            self.SIFT_info = obj
 
     def reduceDimension(self, data):
-        reducedDimensions = self.model.transform(data)
+        normalized_data = self.scaler.transform(data)
+        abs_data = np.abs(normalized_data)
+        reducedDimensions = self.model.transform(abs_data)
         return pd.DataFrame(data=reducedDimensions)
 
     def inv_transform(self, data):
-        reconstructed_normalized_feat_desc = self.model.inverse_transform(data)
+        reconstructed_normalized_feat_desc = np.dot(data, np.transpose(self.featureLatentSemantics))
         return self.scaler.inverse_transform(reconstructed_normalized_feat_desc)
 
     def saveImageID(self, imageID):

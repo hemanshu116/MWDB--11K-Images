@@ -21,6 +21,10 @@ class PCA_Reducer:
         self.pca.fit(self.normalizedFeatureDescriptor)
         self.featureLatentSemantics = self.pca.components_.T
         self.objectLatentSemantics = self.pca.transform(featureDescriptor)
+        self.SIFT_info = None
+
+    def set_SIFT_info(self, obj):
+        self.SIFT_info = obj
 
     def reduceDimension(self, data):
         reducedDimesnions = self.pca.transform(self.scaler.transform(data))
@@ -33,7 +37,7 @@ class PCA_Reducer:
         self.imageID = imageID
 
     def compute_threshold(self):
-        reconstructed_normalized_feat_desc = self.inv_transform( self.objectLatentsSemantics )
+        reconstructed_normalized_feat_desc = self.inv_transform( self.objectLatentSemantics )
         reconstructed_feat_desc = self.scaler.inverse_transform( reconstructed_normalized_feat_desc )
         reconstruction_err = find_distance_2_vectors(reconstructed_feat_desc, self.featureDescriptor)
         # print('shape: ', np.shape(reconstruction_err), np.average(reconstruction_err))

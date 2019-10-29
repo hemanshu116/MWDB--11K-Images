@@ -19,6 +19,10 @@ class SVD_Reducer:
             exit()
         self.featureLatentSemantics = VT[:self.k, :].T
         self.objectLatentSemantics = U[:, :self.k]
+        self.SIFT_info = None
+
+    def set_SIFT_info(self, obj):
+        self.SIFT_info = obj
 
     def reduceDimension(self, featureDescriptor):
         principalDf = pd.DataFrame(data=np.dot(self.scaler.transform(featureDescriptor), self.featureLatentSemantics))

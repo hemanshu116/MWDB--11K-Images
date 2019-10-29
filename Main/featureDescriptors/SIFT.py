@@ -13,19 +13,26 @@ from Main.helper import progress
 
 class SIFT:
 
-    def SIFTForSingleImage(self, filename):
+    @classmethod
+    def SIFTForSingleImage(self, filename, kmeans, scaler):
         feature_df = SIFT.compute_features_by_file(filename, SIFT.compute_sift_features)
-        return feature_df
+        bow_list = SIFT.compute_single_image_BOVW(feature_df['Features'],kmeans,scaler)
+        #print(np.array(bow_list).shape)
+        return np.array(bow_list).T
 
     @classmethod
-    def SIFTFeatureDescriptor(self):
+    def SIFTFeatureDescriptor(self,returnKmeans=False):
         feature_df = SIFT.compute_features_by_folder(config.IMAGE_FOLDER, SIFT.compute_sift_features, return_gray=True)
         # print(feature_df)
-        bow_list = SIFT.compute_BOVW(feature_df['Features'], 500)
-        return np.array(bow_list)
+        bow_list,kmeans,scaler = SIFT.compute_BOVW(feature_df['Features'], 300)
+
+        if (returnKmeans):
+            return np.array(bow_list), (kmeans, scaler)
+        else:
+            return np.array(bow_list)
 
     @classmethod
-    def SIFTFeatureDescriptorForImageSubset(self, imageSet):
+    def SIFTFeatureDescriptorForImageSubset(self, imageSet, returnKmeans=False):
         feature_list = []
         number_files = len(imageSet)
         # print(imageSet)
@@ -39,9 +46,11 @@ class SIFT:
         print()
         feature_df = pd.DataFrame({'FileName': imageSet, 'Features': feature_list})
         # print(feature_df)
-        bow_list = SIFT.compute_BOVW(feature_df['Features'], 500)
-        feature_df = pd.DataFrame(bow_list)
-        return np.array(bow_list)
+        bow_list,kmeans,scaler  = SIFT.compute_BOVW(feature_df['Features'], 300)
+        if(returnKmeans):
+            return np.array(bow_list),(kmeans, scaler)
+        else:
+            return np.array(bow_list)
 
     # Function to compute sift features
     @staticmethod
@@ -88,6 +97,24 @@ class SIFT:
             return img[:, :, 0]
         return img
 
+    @staticmethod
+    def compute_single_image_BOVW(feature_descriptors, kmeans,std_scaler):
+
+        combined_features = np.vstack(np.array(feature_descriptors))
+        #print("Size of stacked features: ", combined_features.shape)
+
+        combined_features = std_scaler.transform(combined_features)
+
+        n_clusters = len(kmeans.cluster_centers_)
+        bovw_vector = np.zeros([len(feature_descriptors), n_clusters])
+
+        for index, features in enumerate(feature_descriptors):
+            features_scaled = std_scaler.transform(features)
+            for i in kmeans.predict(features_scaled):
+                bovw_vector[index, i] += 1
+
+        return list(bovw_vector)
+
     # Function to Bag of Visual Words
     @staticmethod
     def compute_BOVW(feature_descriptors, n_clusters=100):
@@ -114,4 +141,4 @@ class SIFT:
         # bovw_vector_normalized = preprocessing.normalize(bovw_vector, norm='l2')
 
         print("Finished K-means")
-        return list(bovw_vector)
+        return list(bovw_vector), kmeans, std_scaler

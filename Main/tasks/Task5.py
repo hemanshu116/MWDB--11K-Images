@@ -34,8 +34,9 @@ def startTask5():
         time.sleep(5)
     reducer_object = load_pickle(pickle_file_path)
 
+
     # get unlabelled img threshold
-    unseen_img_desc = get_unseen_img_fd(int(feat_desc_ch))  # Get unseen img from usr and returns feature descriptor.
+    unseen_img_desc = get_unseen_img_fd(int(feat_desc_ch), reducer_object)  # Get unseen img from usr and returns feature descriptor.
     unseen_img_threshold = get_unseen_img_threshold(unseen_img_desc, reducer_object)
 
     if (unseen_img_threshold > reducer_object.threshold):
@@ -121,7 +122,7 @@ def recompute_reducer_object(feat_desc, feat_redux, label, k):
         featureVector = hog.HOGFeatureDescriptorForImageSubset(imageSet)
     elif feat_desc == "4":
         sift = SIFT()
-        featureVector = sift.SIFTFeatureDescriptorForImageSubset(imageSet)
+        featureVector, (kmeans,std_scaler)= sift.SIFTFeatureDescriptorForImageSubset(imageSet,returnKmeans=True)
     else:
         print("Wrong input")
         exit()
@@ -135,6 +136,8 @@ def recompute_reducer_object(feat_desc, feat_redux, label, k):
     if feat_redux == "4":
         fr = NMF_Reducer(featureVector, k)
 
+    if(feat_desc=="4"):
+        fr.set_SIFT_info((kmeans,std_scaler))
     fr.saveImageID(imageSet)
     fr.compute_threshold()
 
@@ -213,7 +216,7 @@ def create_latent_semantics(feature_redux_ch, feature_vector, k):
         return NMF_Reducer(feature_vector, k).reduceDimension()
 
 
-def get_unseen_img_fd(feat_desc_ch):
+def get_unseen_img_fd(feat_desc_ch, reducer_obj):
     img_id = input('Enter image ID to be labelled: ')
     img_path = os.path.join(config.FULL_IMAGESET_FOLDER, img_id)
 
@@ -222,17 +225,25 @@ def get_unseen_img_fd(feat_desc_ch):
         return cm.CMForSingleImage(img_path)
     elif (feat_desc_ch == 2):
         lbp = LBP()
+        tmp = lbp.LBPForSingleImage(img_path)
+        print('SIFT shape: ', tmp.shape)
         return lbp.LBPForSingleImage(img_path)
     elif (feat_desc_ch == 3):
         hog = HOG()
+        tmp = hog.HOGForSingleImage(img_path)
+        print('SIFT shape: ', tmp.shape)
         return hog.HOGForSingleImage(img_path)
     elif (feat_desc_ch == 4):
         sift = SIFT()
-        return sift.SIFTForSingleImage(img_path)
+        kmeans, scaler = reducer_obj.SIFT_info
+        tmp = sift.SIFTForSingleImage(img_path, kmeans, scaler)
+        print('SIFT shape: ', tmp.shape)
+        return sift.SIFTForSingleImage(img_path, kmeans, scaler)
 
 
 def get_unseen_img_threshold(unseen_img_desc, reducer_obj):
     tmp = np.reshape(unseen_img_desc, (-1, len(unseen_img_desc)))   # Converting 1D arr to 2D arr.
+    print("aaaa: ",tmp.shape)
     reduced_desc = reducer_obj.reduceDimension(tmp)
     reconstructed_desc = reducer_obj.inv_transform(reduced_desc)
     threshold = find_distance_2_vectors(unseen_img_desc, reconstructed_desc)

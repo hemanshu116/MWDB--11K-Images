@@ -19,7 +19,10 @@ class NMF_Reducer:
         H = self.model.components_
         self.featureLatentSemantics = H[:self.k, :].T
         self.objectLatentSemantics = W[:, :self.k]
+        self.SIFT_info = None
 
+    def set_SIFT_info(self,obj):
+        self.SIFT_info = obj
     def reduceDimension(self, data):
         abs_data = np.abs(self.scaler.transform(data))
         # print(abs_data)

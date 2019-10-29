@@ -90,7 +90,8 @@ def startTask3(inputs=[], shouldGetInputs=True):
 
     elif fdTechnique == "4":
         sift = SIFT()
-        featureVector = sift.SIFTFeatureDescriptorForImageSubset(imageSet)
+        featureVector, (kmeans, std_scaler) = sift.SIFTFeatureDescriptorForImageSubset(imageSet, returnKmeans=True)
+
     else:
         print("Wrong input")
         exit()
@@ -103,6 +104,9 @@ def startTask3(inputs=[], shouldGetInputs=True):
         fr = SVD_Reducer(featureVector, k)
     if frTechnique == "4":
         fr = NMF_Reducer(featureVector, k)
+
+    if(fdTechnique=="4"):
+        fr.set_SIFT_info((kmeans,std_scaler))
 
     fr.saveImageID(imageSet)
     fr.compute_threshold()
